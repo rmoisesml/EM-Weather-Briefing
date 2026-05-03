@@ -1,13 +1,17 @@
 {
-  "name": "Electro Moisés — Briefing Tático",
+  "name": "Electro Mois\u00e9s \u2014 Briefing T\u00e1tico",
   "short_name": "EM Briefing",
-  "description": "Briefing meteorológico tático diário para Ilha Terceira",
+  "description": "Briefing meteorol\u00f3gico t\u00e1tico di\u00e1rio para Ilha Terceira",
   "start_url": "/EM-Weather-Briefing/",
   "display": "standalone",
   "background_color": "#f7f7f5",
   "theme_color": "#1d4d8c",
   "orientation": "portrait",
   "icons": [
-    { "src": "icon.png", "sizes": "192x192", "type": "image/png" }
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
   ]
 }

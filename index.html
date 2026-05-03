@@ -10,12 +10,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="EM Briefing">
-<meta name="theme-color" content="#1d4d8c">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.png">
 <title>Electro Moisés — Briefing Tático</title>
 <style>
   :root {
@@ -983,7 +977,9 @@ const DATA = {
     DATA.zones.forEach(z=>{
       const zd=day.zones[z.id];
       const c=classify(zd.gust,zd.wind,zd.precip,zd.humidity); const lc=c.level.toLowerCase();
-      body+=`<td><div class="cell ${lc}"><span class="cv">${lvIcon(c.level)}</span><span class="cm">${zd.gust} km/h</span></div></td>`;
+      const precipColor = zd.precip > 0 ? '#3b82f6' : 'var(--text-mute)';
+      const precipVal = zd.precip > 0 ? zd.precip.toFixed(1)+'mm' : '0mm';
+      body+=`<td><div class="cell ${lc}"><span class="cv">${lvIcon(c.level)}</span><span class="cm">${zd.gust} km/h</span><span style="font-size:10px;font-weight:600;color:${precipColor}">${precipVal}</span></div></td>`;
     });
     body+="</tr>";
   });
