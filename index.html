@@ -1,1086 +1,512 @@
-<!doctype html>
-<script type="application/json" id="cowork-artifact-meta">
-{
-  "name": "Briefing Tático Meteorológico — Electro Moisés",
-  "schemaVersion": 1,
-  "description": "Briefing diário para Ilha Terceira. Semáforos por zona, matriz semanal 7×5, decisão por tipo de trabalho. Dados: Open-Meteo ECMWF+ICON+GFS (consenso=média de máximos), IPMA, Yr.no."
-}
-</script>
-<html lang="pt-PT">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Electro Moisés — Briefing Tático</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="EM Briefing">
+<meta name="theme-color" content="#1d4d8c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>EM Briefing Tático — 04/05/2026</title>
 <style>
   :root {
-    color-scheme: light;
-    --bg: #f7f7f5;
-    --surface: #ffffff;
-    --surface-2: #fafaf8;
-    --border: #e6e4df;
-    --border-strong: #d4d2cc;
-    --text: #1d1d1b;
-    --text-soft: #5a5953;
-    --text-mute: #8a8881;
-    --green: #1f8a4c;
-    --green-bg: #e6f5ec;
-    --green-border: #c6e4d0;
-    --yellow: #b9831f;
-    --yellow-bg: #fbf2dc;
-    --yellow-border: #ecd49a;
-    --red: #b22a2a;
-    --red-bg: #fbe3e3;
-    --red-border: #f1c4c4;
-    --accent: #1d4d8c;
-    --accent-bg: #e8eef7;
-    --accent-border: #c9d6e9;
+    --green: #22863a; --green-bg: #e6f4ea; --green-border: #b7dfbf;
+    --yellow: #b08800; --yellow-bg: #fffbe6; --yellow-border: #ffe58f;
+    --red: #cf222e; --red-bg: #ffeef0; --red-border: #ffcdd2;
+    --accent: #1d4d8c; --accent-light: #e8f0fb;
+    --bg: #f7f7f5; --surface: #ffffff; --border: #e1e4e8;
+    --text: #24292f; --text-muted: #586069;
+    --radius: 10px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  * { box-sizing: border-box; margin:0; padding:0; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 14px; line-height: 1.45;
-  }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 20px 60px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  .container { max-width: 900px; margin: 0 auto; padding: 12px; }
+  
+  /* HEADER */
+  .header { background: var(--accent); color: white; padding: 16px 20px;
+             border-radius: var(--radius); margin-bottom: 12px; }
+  .header h1 { font-size: 1.3em; font-weight: 700; }
+  .header .subtitle { font-size: 0.85em; opacity: 0.85; margin-top: 4px; }
+  
+  /* TODAY CARD */
+  .today-card { background: var(--surface); border-radius: var(--radius);
+                 border: 2px solid var(--accent); padding: 16px; margin-bottom: 12px;
+                 display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
+  .semaphore { width: 60px; height: 60px; border-radius: 50%; display: flex;
+               align-items: center; justify-content: center; font-size: 1.8em;
+               flex-shrink: 0; }
+  .sem-green { background: var(--green-bg); border: 3px solid var(--green); }
+  .sem-yellow { background: var(--yellow-bg); border: 3px solid var(--yellow); }
+  .sem-red { background: var(--red-bg); border: 3px solid var(--red); }
+  .today-text h2 { font-size: 1.1em; color: var(--accent); }
+  .today-text p { font-size: 0.9em; color: var(--text-muted); margin-top: 4px; }
+  
+  /* ZONE CHIPS */
+  .chips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                 gap: 10px; margin-bottom: 12px; }
+  .zone-chip { background: var(--surface); border-radius: var(--radius);
+               border: 1px solid var(--border); padding: 10px; box-shadow: var(--shadow); }
+  .chip-green { border-left: 4px solid var(--green); }
+  .chip-yellow { border-left: 4px solid var(--yellow); }
+  .chip-red { border-left: 4px solid var(--red); }
+  .chip-header { display: flex; justify-content: space-between; align-items: center;
+                  margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
+  .chip-name { font-weight: 700; font-size: 0.95em; color: var(--accent); }
+  .chip-badge { font-size: 0.75em; font-weight: 600; }
+  .chip-row { display: flex; justify-content: space-between; font-size: 0.8em;
+               padding: 2px 0; border-bottom: 1px solid var(--border); }
+  .chip-row:last-child { border-bottom: none; }
+  .chip-links { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .wg-link { font-size: 0.72em; color: var(--accent); text-decoration: none;
+              background: var(--accent-light); padding: 2px 6px; border-radius: 4px; }
+  .wg-link:hover { background: var(--accent); color: white; }
+  
+  /* SECTION */
+  .section { background: var(--surface); border-radius: var(--radius);
+              border: 1px solid var(--border); margin-bottom: 12px;
+              box-shadow: var(--shadow); overflow: hidden; }
+  .section-title { background: var(--accent); color: white; padding: 10px 14px;
+                    font-size: 0.9em; font-weight: 700; letter-spacing: 0.3px; }
+  .section-body { overflow-x: auto; }
+  
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+  th { background: #f0f4f8; font-weight: 600; padding: 8px 6px; text-align: center;
+        border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 7px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover { background: #f8fafc; }
+  
+  /* VERDICT CELLS */
+  .cell-green { background: var(--green-bg); color: var(--green); font-weight: 600; }
+  .cell-yellow { background: var(--yellow-bg); color: var(--yellow); font-weight: 600; }
+  .cell-red { background: var(--red-bg); color: var(--red); font-weight: 600; }
+  .green { color: var(--green); }
+  .yellow { color: var(--yellow); }
+  .red { color: var(--red); }
+  
+  /* WEEKLY MATRIX */
+  .matrix-cell { text-align: center; padding: 4px 3px; min-width: 65px; }
+  .mi { font-size: 1.1em; font-weight: 700; }
+  .mg { font-size: 0.75em; }
+  .mp { font-size: 0.72em; }
+  .today-row { outline: 2px solid var(--accent); }
+  .today-row td { background: var(--accent-light) !important; }
+  .today-row .cell-green { background: #c8e6c9 !important; }
+  .today-row .cell-yellow { background: #fff9c4 !important; }
+  .today-row .cell-red { background: #ffcdd2 !important; }
+  .day-col { text-align: left !important; font-size: 0.82em; white-space: nowrap; min-width: 72px; font-weight: 600; }
+  
+  /* ADVICE */
+  .advice-list { list-style: none; padding: 10px 14px; }
+  .advice-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.88em; }
+  .advice-list li:last-child { border-bottom: none; }
+  
+  /* FOOTER */
+  .footer { font-size: 0.75em; color: var(--text-muted); text-align: center; padding: 12px;
+             border-top: 1px solid var(--border); margin-top: 8px; }
 
-  /* ── Header ── */
-  header.top {
-    display:flex; align-items:flex-end; justify-content:space-between;
-    gap:12px; flex-wrap:wrap;
-    padding-bottom:14px; border-bottom:1px solid var(--border);
+  @media (max-width: 600px) {
+    .chips-grid { grid-template-columns: 1fr 1fr; }
+    .today-card { flex-direction: column; align-items: flex-start; }
+    table { font-size: 0.75em; }
+    td, th { padding: 5px 3px; }
+    .matrix-cell { min-width: 52px; }
   }
-  header.top h1 { font-size:22px; font-weight:700; letter-spacing:-0.01em; }
-  header.top .sub { margin-top:2px; color:var(--text-soft); font-size:13px; }
-  .meta-right { text-align:right; font-size:12px; color:var(--text-mute); }
-  .meta-right strong { color:var(--text-soft); font-weight:600; }
-
-  /* ── Banner ── */
-  .banner {
-    margin-top:12px; padding:9px 13px; border-radius:7px;
-    border:1px solid var(--border); background:var(--surface);
-    font-size:13px; color:var(--text-soft); display:none;
-  }
-  .banner.warn { background:var(--yellow-bg); border-color:var(--yellow-border); color:#6f4d10; display:block; }
-  .banner.info { background:var(--accent-bg); border-color:var(--accent-border); color:#1a3c6e; display:block; }
-
-  /* ── Today card ── */
-  .today {
-    margin-top:18px; padding:18px 20px;
-    border:1px solid var(--border-strong); border-radius:10px;
-    background:var(--surface);
-    display:grid; grid-template-columns:90px 1fr; gap:16px; align-items:center;
-  }
-  .light {
-    width:80px; height:80px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size:32px; font-weight:700; color:#fff;
-    box-shadow:inset 0 -4px 12px rgba(0,0,0,0.18);
-  }
-  .light.green  { background:var(--green); }
-  .light.yellow { background:var(--yellow); }
-  .light.red    { background:var(--red); }
-  .today h2 { margin-bottom:4px; font-size:17px; }
-  .today .verdict { font-size:20px; font-weight:700; }
-  .verdict.green  { color:var(--green); }
-  .verdict.yellow { color:var(--yellow); }
-  .verdict.red    { color:var(--red); }
-  .today .reason { color:var(--text-soft); margin-top:4px; font-size:13px; }
-
-  /* ── Zone chips ── */
-  .zone-chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-  .zone-chip {
-    border-radius:8px; padding:10px 12px; font-size:12px;
-    border:1px solid; flex:1; min-width:140px;
-    display:flex; flex-direction:column; gap:3px;
-  }
-  .zone-chip.green  { border-color:var(--green-border);  background:var(--green-bg); }
-  .zone-chip.yellow { border-color:var(--yellow-border); background:var(--yellow-bg); }
-  .zone-chip.red    { border-color:var(--red-border);    background:var(--red-bg); }
-  .zone-chip .zname   { font-weight:700; font-size:13px; }
-  .zone-chip .zregion { color:var(--text-mute); font-size:11px; }
-  .zone-chip .zmet    { color:var(--text-soft); font-size:11px; margin-top:2px; }
-  .zone-chip .zfactor { font-size:11px; font-weight:700; margin-top:2px; }
-  .zone-chip.yellow .zfactor { color:var(--yellow); }
-  .zone-chip.red    .zfactor { color:var(--red); }
-
-  /* ── Section header ── */
-  h2.sec {
-    margin:28px 0 10px; font-size:12px; font-weight:700;
-    text-transform:uppercase; letter-spacing:0.07em; color:var(--text-soft);
-    display:flex; align-items:center; gap:10px;
-  }
-  h2.sec::after { content:''; flex:1; height:1px; background:var(--border); }
-  h2.sec .hint { font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-mute); font-size:12px; }
-
-  /* ── Weekly matrix ── */
-  .mat-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
-  table.mat { width:100%; border-collapse:collapse; font-size:12px; min-width:700px; }
-  table.mat th, table.mat td {
-    padding:8px 10px; text-align:center;
-    border-right:1px solid var(--border); border-bottom:1px solid var(--border);
-  }
-  table.mat th:last-child, table.mat td:last-child { border-right:none; }
-  table.mat tr:last-child td { border-bottom:none; }
-  table.mat thead th {
-    background:var(--surface-2); font-size:11px; text-transform:uppercase;
-    letter-spacing:0.04em; color:var(--text-soft); font-weight:700;
-  }
-  table.mat .day-col {
-    text-align:left; font-weight:700;
-    background:var(--surface-2); position:sticky; left:0; z-index:1;
-    min-width:100px; border-right:2px solid var(--border-strong);
-  }
-  table.mat .day-col.today-row { background:var(--accent-bg); color:var(--accent); }
-  table.mat .island-col { background:rgba(29,77,140,0.04); }
-  .cell {
-    padding:5px 4px; border-radius:5px; font-weight:600;
-    display:flex; flex-direction:column; align-items:center; gap:2px;
-  }
-  .cell.green  { background:var(--green-bg);  color:var(--green); }
-  .cell.yellow { background:var(--yellow-bg); color:var(--yellow); }
-  .cell.red    { background:var(--red-bg);    color:var(--red); }
-  .cell .cv  { font-size:14px; line-height:1; }
-  .cell .cm  { font-size:10px; color:var(--text-mute); font-weight:500; }
-
-  /* ── Decision table ── */
-  .dec-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:8px; background:var(--surface); }
-  table.dec { width:100%; border-collapse:collapse; font-size:13px; min-width:660px; }
-  table.dec th, table.dec td {
-    padding:9px 11px; text-align:left;
-    border-right:1px solid var(--border); border-bottom:1px solid var(--border);
-  }
-  table.dec th:last-child, table.dec td:last-child { border-right:none; }
-  table.dec tr:last-child td { border-bottom:none; }
-  table.dec thead th {
-    background:var(--surface-2); font-size:11px; text-transform:uppercase;
-    letter-spacing:0.04em; color:var(--text-soft); font-weight:700;
-  }
-  .pill {
-    display:inline-block; padding:2px 9px; border-radius:999px;
-    font-size:11px; font-weight:700;
-  }
-  .pill.green  { background:var(--green-bg);  color:var(--green); }
-  .pill.yellow { background:var(--yellow-bg); color:var(--yellow); }
-  .pill.red    { background:var(--red-bg);    color:var(--red); }
-
-  /* ── Work matrix ── */
-  table.work { width:100%; border-collapse:collapse; font-size:12px; }
-  table.work th, table.work td {
-    padding:8px 10px; text-align:center;
-    border-right:1px solid var(--border); border-bottom:1px solid var(--border);
-  }
-  table.work th:last-child, table.work td:last-child { border-right:none; }
-  table.work tr:last-child td { border-bottom:none; }
-  table.work thead th {
-    background:var(--surface-2); font-size:11px; text-transform:uppercase;
-    letter-spacing:0.04em; color:var(--text-soft); font-weight:700;
-  }
-  table.work .wk-col {
-    text-align:left; font-weight:600; background:var(--surface-2);
-    position:sticky; left:0; z-index:1; min-width:210px; font-size:12px;
-    border-right:2px solid var(--border-strong);
-  }
-
-  /* ── Advice ── */
-  .advice {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:8px; padding:14px 16px;
-  }
-  .advice ol { padding-left:18px; }
-  .advice li { margin-bottom:8px; color:var(--text-soft); }
-  .advice li strong { color:var(--text); }
-  .advice li:last-child { margin-bottom:0; }
-
-  /* ── Windguru ── */
-  .wg-grid { display:flex; flex-wrap:wrap; gap:8px; }
-  .wg-card {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:8px; padding:10px 13px; flex:1; min-width:148px;
-    display:flex; flex-direction:column; gap:4px;
-  }
-  .wg-card .wgz  { font-weight:700; font-size:12px; }
-  .wg-card .wgr  { color:var(--text-mute); font-size:11px; }
-  .wg-card .wglinks { display:flex; flex-wrap:wrap; gap:5px; margin-top:3px; }
-  .wg-card a {
-    display:inline-flex; align-items:center; gap:3px;
-    font-size:11px; color:var(--accent); font-weight:600;
-    padding:3px 8px; background:var(--accent-bg);
-    border:1px solid var(--accent-border); border-radius:4px;
-    text-decoration:none;
-  }
-  .wg-card a:hover { background:#d4e0f0; }
-
-  footer {
-    margin-top:28px; font-size:11px; color:var(--text-mute);
-    line-height:1.6; border-top:1px solid var(--border); padding-top:14px;
-  }
-  footer code { background:rgba(0,0,0,0.05); padding:1px 4px; border-radius:3px; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="container">
 
-<!-- ═══ HEADER ═══════════════════════════════════════════════════ -->
-<header class="top">
-  <div>
-    <h1>⚡ Electro Moisés — Briefing Tático</h1>
-    <div class="sub">Ilha Terceira · 5 zonas · Climatização · Industrial · Eletricidade exterior</div>
+  <!-- HEADER -->
+  <div class="header">
+    <h1>⛅ Electro Moisés — Briefing Tático</h1>
+    <div class="subtitle">📍 Ilha Terceira, Açores &nbsp;|&nbsp; 🕐 04 May 2026 — 03:06 (hora Açores) &nbsp;|&nbsp; 🔄 Open-Meteo (ECMWF+ICON+GFS) + IPMA + Yr.no</div>
   </div>
-  <div class="meta-right">
-    <div><strong>Atualizado:</strong> <span id="lastUpdate">—</span></div>
-    <div><strong>Fonte:</strong> Open-Meteo (ECMWF · ICON · GFS) · Yr.no · IPMA</div>
+
+  <!-- TODAY CARD -->
+  <div class="today-card">
+    <div class="semaphore sem-green">🟢</div>
+    <div class="today-text">
+      <h2>Hoje — Monday, 04 de may de 2026</h2>
+      <p>🟢 Condições favoráveis em toda a ilha. Operações exteriores autorizadas.</p>
+    </div>
   </div>
-</header>
 
-<div class="banner" id="banner"></div>
+  <!-- ZONE CHIPS -->
+  <div class="chips-grid">
+    
+    <div class="zone-chip chip-green">
+        <div class="chip-header">
+            <span class="chip-name">Sul</span>
+            <span class="chip-badge">🟢 VERDE</span>
+        </div>
+        <div class="chip-data">
+            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
+            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
+            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
+            <div class="chip-row"><span>💧 Humidade</span><span>68%</span></div>
+            <div class="chip-row"><span>🌡️ Temp.</span><span>14.7°C</span></div>
+        </div>
+        <div class="chip-links"><a href="https://www.windguru.cz/88976" target="_blank" class="wg-link">Angra</a></div>
+    </div>
+    <div class="zone-chip chip-green">
+        <div class="chip-header">
+            <span class="chip-name">Norte</span>
+            <span class="chip-badge">🟢 VERDE</span>
+        </div>
+        <div class="chip-data">
+            <div class="chip-row"><span>💨 Rajadas</span><span><strong>35 km/h</strong> <small>(pior 45 km/h)</small></span></div>
+            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
+            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
+            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
+            <div class="chip-row"><span>🌡️ Temp.</span><span>15.2°C</span></div>
+        </div>
+        <div class="chip-links"><a href="https://www.windguru.cz/35922" target="_blank" class="wg-link">Biscoitos</a></div>
+    </div>
+    <div class="zone-chip chip-green">
+        <div class="chip-header">
+            <span class="chip-name">Este</span>
+            <span class="chip-badge">🟢 VERDE</span>
+        </div>
+        <div class="chip-data">
+            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
+            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
+            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
+            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
+            <div class="chip-row"><span>🌡️ Temp.</span><span>14.9°C</span></div>
+        </div>
+        <div class="chip-links"><a href="https://www.windguru.cz/35923" target="_blank" class="wg-link">Praia V.</a></div>
+    </div>
+    <div class="zone-chip chip-green">
+        <div class="chip-header">
+            <span class="chip-name">Sudeste</span>
+            <span class="chip-badge">🟢 VERDE</span>
+        </div>
+        <div class="chip-data">
+            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
+            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
+            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
+            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
+            <div class="chip-row"><span>🌡️ Temp.</span><span>14.9°C</span></div>
+        </div>
+        <div class="chip-links"><a href="https://www.windguru.cz/895975" target="_blank" class="wg-link">Lajes</a></div>
+    </div>
+    <div class="zone-chip chip-green">
+        <div class="chip-header">
+            <span class="chip-name">Oeste</span>
+            <span class="chip-badge">🟢 VERDE</span>
+        </div>
+        <div class="chip-data">
+            <div class="chip-row"><span>💨 Rajadas</span><span><strong>35 km/h</strong> <small>(pior 45 km/h)</small></span></div>
+            <div class="chip-row"><span>🌬️ Vento</span><span>19 km/h</span></div>
+            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
+            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
+            <div class="chip-row"><span>🌡️ Temp.</span><span>15.6°C</span></div>
+        </div>
+        <div class="chip-links"><a href="https://www.windguru.cz/14904" target="_blank" class="wg-link">Sta. Bárbara A</a> <a href="https://www.windguru.cz/32852" target="_blank" class="wg-link">Sta. Bárbara B</a></div>
+    </div>
+  </div>
 
-<!-- ═══ TODAY CARD ════════════════════════════════════════════════ -->
-<div class="today" id="todayCard"></div>
+  <!-- WEEKLY MATRIX -->
+  <div class="section">
+    <div class="section-title">📅 Matriz Semanal — 7 Dias × 5 Zonas (07h–17h)</div>
+    <div class="section-body">
+    <table>
+      <thead>
+        <tr>
+          <th class="day-col">Dia</th>
+          <th>🏝 Ilha</th>
+          <th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th>
+        </tr>
+        <tr style="font-size:0.72em; color:#888;">
+          <td></td><td></td>
+          <td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="today-row"><td class='day-col'>Seg 04/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">37 km/h</div>
+            <div class="mp" style="color:#888">0.0mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">35 km/h</div>
+            <div class="mp" style="color:#888">0.0mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">37 km/h</div>
+            <div class="mp" style="color:#888">0.0mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">37 km/h</div>
+            <div class="mp" style="color:#888">0.0mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">35 km/h</div>
+            <div class="mp" style="color:#888">0.0mm</div>
+        </td></tr><tr><td class='day-col'>Ter 05/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">29 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.4mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">27 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.4mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">29 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.4mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">29 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.4mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">27 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.4mm</div>
+        </td></tr><tr><td class='day-col'>Qua 06/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">23 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.6mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">21 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.7mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">23 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.6mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">23 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.6mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">21 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.7mm</div>
+        </td></tr><tr><td class='day-col'>Qui 07/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">65 km/h</div>
+            <div class="mp" style="color:#5db8e8">1.6mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">64 km/h</div>
+            <div class="mp" style="color:#5db8e8">2.6mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">65 km/h</div>
+            <div class="mp" style="color:#5db8e8">1.3mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">65 km/h</div>
+            <div class="mp" style="color:#5db8e8">1.3mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">64 km/h</div>
+            <div class="mp" style="color:#5db8e8">2.9mm</div>
+        </td></tr><tr><td class='day-col'>Sex 08/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">61 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.7mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">61 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.8mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">61 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.5mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">61 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.5mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">61 km/h</div>
+            <div class="mp" style="color:#5db8e8">1.2mm</div>
+        </td></tr><tr><td class='day-col'>Sáb 09/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">53 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.9mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">49 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.9mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">53 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.9mm</div>
+        </td><td class="matrix-cell cell-yellow">
+            <div class="mi">⚠</div>
+            <div class="mg">53 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.9mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">49 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.9mm</div>
+        </td></tr><tr><td class='day-col'>Dom 10/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">38 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.1mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">34 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.1mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">38 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.1mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">38 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.1mm</div>
+        </td><td class="matrix-cell cell-green">
+            <div class="mi">✓</div>
+            <div class="mg">34 km/h</div>
+            <div class="mp" style="color:#5db8e8">0.1mm</div>
+        </td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
 
-<!-- ═══ ZONE CHIPS ════════════════════════════════════════════════ -->
-<h2 class="sec">Hoje por zona <span class="hint">· escolher obra conforme zona específica</span></h2>
-<div class="zone-chips" id="zoneChips"></div>
+  <!-- TODAY DECISION TABLE -->
+  <div class="section">
+    <div class="section-title">📊 Decisão Operacional de Hoje por Zona</div>
+    <div class="section-body">
+    <table>
+      <thead>
+        <tr>
+          <th>Zona</th><th>Raj.méd</th><th>Raj.pior</th><th>Vento</th>
+          <th>Chuva</th><th>Humidade</th>
+          <th>Manhã 07–13h</th><th>Tarde 14–17h</th><th>Veredicto</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+            <td><strong>Sul</strong></td>
+            <td>37 km/h</td>
+            <td>48 km/h</td>
+            <td>21 km/h</td>
+            <td>0.0 mm</td>
+            <td>68%</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="cell-green"><strong>🟢 VERDE</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Norte</strong></td>
+            <td>35 km/h</td>
+            <td>45 km/h</td>
+            <td>21 km/h</td>
+            <td>0.0 mm</td>
+            <td>67%</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="cell-green"><strong>🟢 VERDE</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Este</strong></td>
+            <td>37 km/h</td>
+            <td>48 km/h</td>
+            <td>21 km/h</td>
+            <td>0.0 mm</td>
+            <td>67%</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="cell-green"><strong>🟢 VERDE</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Sudeste</strong></td>
+            <td>37 km/h</td>
+            <td>48 km/h</td>
+            <td>21 km/h</td>
+            <td>0.0 mm</td>
+            <td>67%</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="cell-green"><strong>🟢 VERDE</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Oeste</strong></td>
+            <td>35 km/h</td>
+            <td>45 km/h</td>
+            <td>19 km/h</td>
+            <td>0.0 mm</td>
+            <td>67%</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="green">🟢 VERDE</td>
+            <td class="cell-green"><strong>🟢 VERDE</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
 
-<!-- ═══ WEEKLY MATRIX ═════════════════════════════════════════════ -->
-<h2 class="sec">Matriz semanal · 7 dias × 5 zonas <span class="hint">· veredicto + rajada consenso</span></h2>
-<div class="mat-wrap">
-  <table class="mat" id="weeklyMatrix"></table>
+  <!-- WORK MATRIX -->
+  <div class="section">
+    <div class="section-title">🔧 Matriz de Trabalhos Hoje (por zona)</div>
+    <div class="section-body">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de Trabalho</th>
+          <th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Içamento UE (split/multisplit)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Içamento monobloco/bomba calor pesado</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Instalação em telhado/cobertura</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Passagem de condutas exteriores</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Vácuos de refrigeração (exterior)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Carga de fluido frigorigéneo</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Extração industrial (condutas teto)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Trabalhos em fachada (caixas elét.)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Todo o trabalho interior</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- STRATEGIC ADVICE -->
+  <div class="section">
+    <div class="section-title">💡 Conselhos Estratégicos</div>
+    <ul class="advice-list">
+      <li>📅 Melhor janela esta semana: Seg 04/05 (5/5 zonas verdes).</li>
+    </ul>
+  </div>
+
+  <!-- WINDGURU -->
+  <div class="section">
+    <div class="section-title">🌊 Windguru — Consulta Rápida</div>
+    <div style="padding:10px 14px; display:flex; flex-wrap:wrap; gap:8px;">
+      <a href="https://www.windguru.cz/88976" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Sul — Angra</div>
+      </a>
+      <a href="https://www.windguru.cz/35922" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Norte — Biscoitos</div>
+      </a>
+      <a href="https://www.windguru.cz/35923" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Este — Praia V.</div>
+      </a>
+      <a href="https://www.windguru.cz/895975" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Sudeste — Lajes</div>
+      </a>
+      <a href="https://www.windguru.cz/14904" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Oeste — Sta.Bárbara A</div>
+      </a>
+      <a href="https://www.windguru.cz/32852" target="_blank" style="text-decoration:none;">
+        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Oeste — Sta.Bárbara B</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p><strong>Fontes:</strong> Open-Meteo (ECMWF IFS0.25°, ICON Seamless, GFS Seamless) · IPMA · Yr.no (Met Norway)</p>
+    <p><strong>Metodologia:</strong> Consenso de 3 modelos numéricos · Rajadas = média dos máximos por modelo · Janelas 07h–13h (manhã) e 14h–17h (tarde) hora Açores (UTC−1)</p>
+    <p style="margin-top:4px;">Gerado automaticamente — Electro Moisés, Ilha Terceira, Açores</p>
+  </div>
+
 </div>
-
-<!-- ═══ DECISION TABLE ════════════════════════════════════════════ -->
-<h2 class="sec">Decisão de hoje · detalhe por zona</h2>
-<div class="dec-wrap">
-  <table class="dec" id="decTable">
-    <thead>
-      <tr>
-        <th>Zona</th>
-        <th>Rajadas (méd.)</th>
-        <th>Rajadas (pior)</th>
-        <th>Vento méd.</th>
-        <th>Chuva</th>
-        <th>Humidade</th>
-        <th>Manhã 07–13h</th>
-        <th>Tarde 14–17h</th>
-        <th>Veredicto</th>
-      </tr>
-    </thead>
-    <tbody id="decTbody"></tbody>
-  </table>
-</div>
-
-<!-- ═══ WORK MATRIX ════════════════════════════════════════════════ -->
-<h2 class="sec">Matriz de trabalhos · hoje por zona</h2>
-<div class="mat-wrap">
-  <table class="work" id="workMatrix"></table>
-</div>
-
-<!-- ═══ ADVICE ═══════════════════════════════════════════════════ -->
-<h2 class="sec">Conselhos estratégicos</h2>
-<div class="advice" id="advice"></div>
-
-<!-- ═══ WINDGURU ══════════════════════════════════════════════════ -->
-<h2 class="sec">Verificação manual Windguru <span class="hint">· clicar para abrir no browser antes de içamentos críticos</span></h2>
-<div class="wg-grid" id="wgGrid"></div>
-
-<!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
-<footer>
-  <strong>Dados e metodologia:</strong>
-  Open-Meteo — modelos <code>ECMWF IFS 0.25°</code>, <code>ICON Seamless</code>, <code>GFS Seamless</code>.
-  Consensus de rajadas = <strong>média dos máximos por modelo</strong> (excluindo modelos sem dados de rajadas).
-  O campo "Pior" mostra o máximo absoluto entre modelos — útil como margem de segurança para içamentos.
-  Vento e humidade = média simples dos modelos. Precipitação = média dos acumulados.
-  Fontes secundárias: Yr.no (MET Norway) · IPMA (Angra do Heroísmo proxy ilha).
-  Janelas de trabalho: 07h–13h e 14h–17h (hora Açores = UTC−1).
-  Windguru requer conta PRO para API — usar links acima para verificação manual antes de içamentos.
-</footer>
-</div>
-
-<script>
-const DATA = {
-  "generatedAt": "2026-05-03T14:42:31",
-  "days": [
-    {
-      "date": "2026-05-03",
-      "zones": {
-        "Sul": {
-          "gust": 41,
-          "gust_max": 53,
-          "wind": 24,
-          "precip": 0.3,
-          "humidity": 74,
-          "temp": 14.5,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 41,
-          "m_precip": 0.2,
-          "t_gust": 37,
-          "t_precip": 0.1
-        },
-        "Norte": {
-          "gust": 38,
-          "gust_max": 47,
-          "wind": 25,
-          "precip": 0.3,
-          "humidity": 73,
-          "temp": 15.1,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 38,
-          "m_precip": 0.2,
-          "t_gust": 33,
-          "t_precip": 0.1
-        },
-        "Este": {
-          "gust": 41,
-          "gust_max": 53,
-          "wind": 26,
-          "precip": 0.3,
-          "humidity": 74,
-          "temp": 14.8,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 41,
-          "m_precip": 0.2,
-          "t_gust": 37,
-          "t_precip": 0.1
-        },
-        "Sudeste": {
-          "gust": 41,
-          "gust_max": 53,
-          "wind": 27,
-          "precip": 0.3,
-          "humidity": 74,
-          "temp": 14.8,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 41,
-          "m_precip": 0.2,
-          "t_gust": 37,
-          "t_precip": 0.1
-        },
-        "Oeste": {
-          "gust": 38,
-          "gust_max": 47,
-          "wind": 23,
-          "precip": 0.3,
-          "humidity": 72,
-          "temp": 15.3,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 38,
-          "m_precip": 0.2,
-          "t_gust": 33,
-          "t_precip": 0.1
-        }
-      }
-    },
-    {
-      "date": "2026-05-04",
-      "zones": {
-        "Sul": {
-          "gust": 35,
-          "gust_max": 46,
-          "wind": 22,
-          "precip": 0,
-          "humidity": 70,
-          "temp": 14.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 35,
-          "m_precip": 0,
-          "t_gust": 33,
-          "t_precip": 0
-        },
-        "Norte": {
-          "gust": 32,
-          "gust_max": 40,
-          "wind": 22,
-          "precip": 0,
-          "humidity": 68,
-          "temp": 14.7,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 32,
-          "m_precip": 0,
-          "t_gust": 29,
-          "t_precip": 0
-        },
-        "Este": {
-          "gust": 35,
-          "gust_max": 46,
-          "wind": 23,
-          "precip": 0.1,
-          "humidity": 69,
-          "temp": 14.4,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 35,
-          "m_precip": 0,
-          "t_gust": 33,
-          "t_precip": 0.1
-        },
-        "Sudeste": {
-          "gust": 35,
-          "gust_max": 46,
-          "wind": 24,
-          "precip": 0,
-          "humidity": 69,
-          "temp": 14.4,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 35,
-          "m_precip": 0,
-          "t_gust": 33,
-          "t_precip": 0
-        },
-        "Oeste": {
-          "gust": 32,
-          "gust_max": 40,
-          "wind": 21,
-          "precip": 0,
-          "humidity": 68,
-          "temp": 15.1,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 32,
-          "m_precip": 0,
-          "t_gust": 29,
-          "t_precip": 0
-        }
-      }
-    },
-    {
-      "date": "2026-05-05",
-      "zones": {
-        "Sul": {
-          "gust": 28,
-          "gust_max": 33,
-          "wind": 16,
-          "precip": 0.3,
-          "humidity": 70,
-          "temp": 14.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 28,
-          "m_precip": 0.2,
-          "t_gust": 22,
-          "t_precip": 0.1
-        },
-        "Norte": {
-          "gust": 25,
-          "gust_max": 27,
-          "wind": 17,
-          "precip": 0.3,
-          "humidity": 70,
-          "temp": 14.5,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 25,
-          "m_precip": 0.2,
-          "t_gust": 18,
-          "t_precip": 0.1
-        },
-        "Este": {
-          "gust": 28,
-          "gust_max": 33,
-          "wind": 18,
-          "precip": 0.3,
-          "humidity": 70,
-          "temp": 14.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 28,
-          "m_precip": 0.2,
-          "t_gust": 22,
-          "t_precip": 0.1
-        },
-        "Sudeste": {
-          "gust": 28,
-          "gust_max": 33,
-          "wind": 19,
-          "precip": 0.3,
-          "humidity": 68,
-          "temp": 14.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 28,
-          "m_precip": 0.2,
-          "t_gust": 22,
-          "t_precip": 0.1
-        },
-        "Oeste": {
-          "gust": 25,
-          "gust_max": 27,
-          "wind": 16,
-          "precip": 0.2,
-          "humidity": 68,
-          "temp": 15.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 25,
-          "m_precip": 0.1,
-          "t_gust": 18,
-          "t_precip": 0.1
-        }
-      }
-    },
-    {
-      "date": "2026-05-06",
-      "zones": {
-        "Sul": {
-          "gust": 26,
-          "gust_max": 35,
-          "wind": 10,
-          "precip": 0.2,
-          "humidity": 71,
-          "temp": 13.9,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 21,
-          "m_precip": 0.1,
-          "t_gust": 26,
-          "t_precip": 0.1
-        },
-        "Norte": {
-          "gust": 24,
-          "gust_max": 32,
-          "wind": 11,
-          "precip": 0.3,
-          "humidity": 70,
-          "temp": 14.4,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 19,
-          "m_precip": 0.2,
-          "t_gust": 24,
-          "t_precip": 0.1
-        },
-        "Este": {
-          "gust": 26,
-          "gust_max": 35,
-          "wind": 9,
-          "precip": 0.2,
-          "humidity": 71,
-          "temp": 14.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 21,
-          "m_precip": 0.1,
-          "t_gust": 26,
-          "t_precip": 0.1
-        },
-        "Sudeste": {
-          "gust": 26,
-          "gust_max": 35,
-          "wind": 9,
-          "precip": 0.2,
-          "humidity": 70,
-          "temp": 14.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 21,
-          "m_precip": 0.1,
-          "t_gust": 26,
-          "t_precip": 0.1
-        },
-        "Oeste": {
-          "gust": 24,
-          "gust_max": 32,
-          "wind": 12,
-          "precip": 0.3,
-          "humidity": 72,
-          "temp": 14.6,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 19,
-          "m_precip": 0.2,
-          "t_gust": 24,
-          "t_precip": 0.1
-        }
-      }
-    },
-    {
-      "date": "2026-05-07",
-      "zones": {
-        "Sul": {
-          "gust": 66,
-          "gust_max": 90,
-          "wind": 32,
-          "precip": 1.3,
-          "humidity": 75,
-          "temp": 13.9,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 62,
-          "m_precip": 0.4,
-          "t_gust": 66,
-          "t_precip": 0.9
-        },
-        "Norte": {
-          "gust": 66,
-          "gust_max": 90,
-          "wind": 33,
-          "precip": 1.5,
-          "humidity": 75,
-          "temp": 14.3,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 58,
-          "m_precip": 0.5,
-          "t_gust": 66,
-          "t_precip": 1.0
-        },
-        "Este": {
-          "gust": 66,
-          "gust_max": 90,
-          "wind": 35,
-          "precip": 1.0,
-          "humidity": 74,
-          "temp": 14.2,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 62,
-          "m_precip": 0.2,
-          "t_gust": 66,
-          "t_precip": 0.8
-        },
-        "Sudeste": {
-          "gust": 66,
-          "gust_max": 90,
-          "wind": 35,
-          "precip": 1.0,
-          "humidity": 74,
-          "temp": 14.2,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 62,
-          "m_precip": 0.2,
-          "t_gust": 66,
-          "t_precip": 0.8
-        },
-        "Oeste": {
-          "gust": 66,
-          "gust_max": 90,
-          "wind": 31,
-          "precip": 1.8,
-          "humidity": 76,
-          "temp": 14.4,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 58,
-          "m_precip": 0.6,
-          "t_gust": 66,
-          "t_precip": 1.2
-        }
-      }
-    },
-    {
-      "date": "2026-05-08",
-      "zones": {
-        "Sul": {
-          "gust": 53,
-          "gust_max": 61,
-          "wind": 28,
-          "precip": 1.2,
-          "humidity": 74,
-          "temp": 14.7,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 51,
-          "m_precip": 0.6,
-          "t_gust": 53,
-          "t_precip": 0.6
-        },
-        "Norte": {
-          "gust": 48,
-          "gust_max": 51,
-          "wind": 27,
-          "precip": 1.3,
-          "humidity": 76,
-          "temp": 15.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 46,
-          "m_precip": 0.7,
-          "t_gust": 48,
-          "t_precip": 0.6
-        },
-        "Este": {
-          "gust": 53,
-          "gust_max": 61,
-          "wind": 30,
-          "precip": 1.1,
-          "humidity": 74,
-          "temp": 14.9,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 51,
-          "m_precip": 0.5,
-          "t_gust": 53,
-          "t_precip": 0.6
-        },
-        "Sudeste": {
-          "gust": 53,
-          "gust_max": 61,
-          "wind": 30,
-          "precip": 1.1,
-          "humidity": 74,
-          "temp": 15.0,
-          "level": "YELLOW",
-          "factor": "Vento",
-          "m_gust": 51,
-          "m_precip": 0.5,
-          "t_gust": 53,
-          "t_precip": 0.6
-        },
-        "Oeste": {
-          "gust": 48,
-          "gust_max": 51,
-          "wind": 26,
-          "precip": 1.4,
-          "humidity": 77,
-          "temp": 15.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 46,
-          "m_precip": 0.8,
-          "t_gust": 48,
-          "t_precip": 0.6
-        }
-      }
-    },
-    {
-      "date": "2026-05-09",
-      "zones": {
-        "Sul": {
-          "gust": 39,
-          "gust_max": 52,
-          "wind": 22,
-          "precip": 0.8,
-          "humidity": 70,
-          "temp": 14.0,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 36,
-          "m_precip": 0.5,
-          "t_gust": 39,
-          "t_precip": 0.3
-        },
-        "Norte": {
-          "gust": 35,
-          "gust_max": 41,
-          "wind": 21,
-          "precip": 0.8,
-          "humidity": 70,
-          "temp": 14.4,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 35,
-          "m_precip": 0.5,
-          "t_gust": 33,
-          "t_precip": 0.3
-        },
-        "Este": {
-          "gust": 39,
-          "gust_max": 52,
-          "wind": 23,
-          "precip": 0.8,
-          "humidity": 70,
-          "temp": 14.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 36,
-          "m_precip": 0.5,
-          "t_gust": 39,
-          "t_precip": 0.3
-        },
-        "Sudeste": {
-          "gust": 39,
-          "gust_max": 52,
-          "wind": 23,
-          "precip": 0.8,
-          "humidity": 69,
-          "temp": 14.2,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 36,
-          "m_precip": 0.5,
-          "t_gust": 39,
-          "t_precip": 0.3
-        },
-        "Oeste": {
-          "gust": 35,
-          "gust_max": 41,
-          "wind": 21,
-          "precip": 0.8,
-          "humidity": 70,
-          "temp": 14.6,
-          "level": "GREEN",
-          "factor": "",
-          "m_gust": 35,
-          "m_precip": 0.5,
-          "t_gust": 33,
-          "t_precip": 0.3
-        }
-      }
-    }
-  ],
-  "zones": [
-    {
-      "id": "Sul",
-      "full": "Angra do Heroísmo",
-      "short": "Angra",
-      "region": "Sul",
-      "wg": [
-        "https://www.windguru.cz/88976"
-      ]
-    },
-    {
-      "id": "Norte",
-      "full": "Biscoitos",
-      "short": "Biscoitos",
-      "region": "Norte",
-      "wg": [
-        "https://www.windguru.cz/35922"
-      ]
-    },
-    {
-      "id": "Este",
-      "full": "Praia da Vitória",
-      "short": "Praia Vit.",
-      "region": "Este",
-      "wg": [
-        "https://www.windguru.cz/35923"
-      ]
-    },
-    {
-      "id": "Sudeste",
-      "full": "Vila das Lajes",
-      "short": "Lajes",
-      "region": "Sudeste",
-      "wg": [
-        "https://www.windguru.cz/895975"
-      ]
-    },
-    {
-      "id": "Oeste",
-      "full": "Santa Bárbara",
-      "short": "Sta. Bárbara",
-      "region": "Oeste",
-      "wg": [
-        "https://www.windguru.cz/14904",
-        "https://www.windguru.cz/32852"
-      ]
-    }
-  ]
-};
-
-(function(){
-  const DAY_S = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-  const DAY_L = ["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
-  const RANK  = {GREEN:0, YELLOW:1, RED:2};
-
-  function classify(gust, wind, precip, hum) {
-    const g=gust||0, w=wind||0, p=precip||0, h=hum||0;
-    if (g>75||w>50)  return {level:"RED",    factor:"Vento"};
-    if (p>8)         return {level:"RED",    factor:"Chuva"};
-    if (h>90)        return {level:"RED",    factor:"Humidade"};
-    if (g>50||w>30)  return {level:"YELLOW", factor:"Vento"};
-    if (p>2)         return {level:"YELLOW", factor:"Chuva"};
-    if (h>82)        return {level:"YELLOW", factor:"Humidade"};
-    return {level:"GREEN", factor:""};
-  }
-  function worst(levels) {
-    return levels.reduce((a,l)=> RANK[l]>RANK[a]?l:a, "GREEN");
-  }
-  function lvLabel(l)  { return l==="GREEN"?"VERDE":l==="YELLOW"?"AMARELO":"VERMELHO"; }
-  function lvPhrase(l) { return l==="GREEN"?"Toda a ilha favorável — obra exterior livre":
-                                 l==="YELLOW"?"Atenção — avaliar por zona antes de içamentos":
-                                 "Condições adversas — foco no interior"; }
-  function lvIcon(l)   { return l==="GREEN"?"✓":l==="YELLOW"?"⚠":"✗"; }
-  function dShort(iso) {
-    const d=new Date(iso+"T12:00:00");
-    return DAY_S[d.getDay()]+" "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");
-  }
-  function dLong(iso)  {
-    const d=new Date(iso+"T12:00:00");
-    return DAY_L[d.getDay()]+" "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");
-  }
-  const today = DATA.days[0];
-
-  // ── Header ─────────────────────────────────────────────────────
-  const gen = new Date(DATA.generatedAt);
-  document.getElementById("lastUpdate").textContent =
-    gen.toLocaleString("pt-PT",{dateStyle:"short",timeStyle:"short"});
-  const ageH = (Date.now()-gen.getTime())/(1000*60*60);
-  if (ageH > 26) {
-    const b=document.getElementById("banner");
-    b.className="banner warn";
-    b.innerHTML="<strong>Dados com "+ageH.toFixed(0)+"h</strong> — aguardar refresh automático matinal.";
-  }
-
-  // ── Island level ────────────────────────────────────────────────
-  function islandLevel(dayObj) {
-    return worst(DATA.zones.map(z => {
-      const zd=dayObj.zones[z.id];
-      return classify(zd.gust, zd.wind, zd.precip, zd.humidity).level;
-    }));
-  }
-
-  // ── Today card ──────────────────────────────────────────────────
-  const todayLvl = islandLevel(today);
-  const todayByZone = DATA.zones.map(z => {
-    const zd=today.zones[z.id];
-    return {name:z.short, level:classify(zd.gust,zd.wind,zd.precip,zd.humidity).level};
-  });
-  const greenZ  = todayByZone.filter(x=>x.level==="GREEN").map(x=>x.name);
-  const yellowZ = todayByZone.filter(x=>x.level==="YELLOW").map(x=>x.name);
-  const redZ    = todayByZone.filter(x=>x.level==="RED").map(x=>x.name);
-  let reason="";
-  if (redZ.length)                        reason=`Crítico em ${redZ.join(", ")}. Janela em ${[...greenZ,...yellowZ].join(", ")||"nenhuma zona"}.`;
-  else if (greenZ.length===DATA.zones.length) reason="Condições ideais em toda a ilha — janela limpa para içamentos e vácuos.";
-  else reason=`${greenZ.length} zona(s) em VERDE: ${greenZ.join(", ")||"—"}.${yellowZ.length?" Atenção em "+yellowZ.join(", ")+".":""}`;
-
-  document.getElementById("todayCard").innerHTML=`
-    <div class="light ${todayLvl.toLowerCase()}">${lvIcon(todayLvl)}</div>
-    <div>
-      <h2>Hoje · ${dLong(today.date)}</h2>
-      <div class="verdict ${todayLvl.toLowerCase()}">${lvPhrase(todayLvl)}</div>
-      <div class="reason">${reason}</div>
-    </div>`;
-
-  // ── Zone chips ──────────────────────────────────────────────────
-  document.getElementById("zoneChips").innerHTML = DATA.zones.map(z=>{
-    const zd=today.zones[z.id];
-    const c=classify(zd.gust,zd.wind,zd.precip,zd.humidity);
-    const lc=c.level.toLowerCase();
-    const factorHtml=c.factor?`<div class="zfactor">⚠ Fator: ${c.factor}</div>`:"";
-    return `<div class="zone-chip ${lc}">
-      <div class="zname">${z.short}</div>
-      <div class="zregion">${z.region} · ${z.full}</div>
-      <div class="zmet">Raj. <strong>${zd.gust}</strong> km/h (pior ${zd.gust_max}) · ${zd.wind} km/h méd.</div>
-      <div class="zmet">Chuva ${zd.precip.toFixed(1)}mm · Hum. ${zd.humidity}%</div>
-      ${factorHtml}
-    </div>`;
-  }).join("");
-
-  // ── Weekly matrix ───────────────────────────────────────────────
-  let head=`<thead><tr><th class="day-col">Dia</th><th class="island-col">🏝 Ilha</th>`;
-  DATA.zones.forEach(z=>{ head+=`<th>${z.short}</th>`; });
-  head+="</tr></thead>";
-  let body="<tbody>";
-  DATA.days.forEach((day,i)=>{
-    const isToday=(i===0);
-    const iLvl=islandLevel(day); const ilc=iLvl.toLowerCase();
-    body+=`<tr><td class="day-col${isToday?" today-row":""}">${isToday?"● Hoje":""}<br>${dShort(day.date)}</td>`;
-    body+=`<td class="island-col"><div class="cell ${ilc}"><span class="cv">${lvIcon(iLvl)}</span></div></td>`;
-    DATA.zones.forEach(z=>{
-      const zd=day.zones[z.id];
-      const c=classify(zd.gust,zd.wind,zd.precip,zd.humidity); const lc=c.level.toLowerCase();
-      const precipColor = zd.precip > 0 ? '#3b82f6' : 'var(--text-mute)';
-      const precipVal = zd.precip > 0 ? zd.precip.toFixed(1)+'mm' : '0mm';
-      body+=`<td><div class="cell ${lc}"><span class="cv">${lvIcon(c.level)}</span><span class="cm">${zd.gust} km/h</span><span style="font-size:10px;font-weight:600;color:${precipColor}">${precipVal}</span></div></td>`;
-    });
-    body+="</tr>";
-  });
-  body+="</tbody>";
-  document.getElementById("weeklyMatrix").innerHTML=head+body;
-
-  // ── Decision table ──────────────────────────────────────────────
-  const sortedZ = DATA.zones.slice().sort((a,b)=>{
-    const la=classify(today.zones[a.id].gust,today.zones[a.id].wind,today.zones[a.id].precip,today.zones[a.id].humidity);
-    const lb=classify(today.zones[b.id].gust,today.zones[b.id].wind,today.zones[b.id].precip,today.zones[b.id].humidity);
-    return RANK[lb.level]-RANK[la.level];
-  });
-  document.getElementById("decTbody").innerHTML=sortedZ.map(z=>{
-    const zd=today.zones[z.id];
-    const c=classify(zd.gust,zd.wind,zd.precip,zd.humidity); const lc=c.level.toLowerCase();
-    const mc=classify(zd.m_gust,0,zd.m_precip,zd.humidity); const mlc=mc.level.toLowerCase();
-    const tc=classify(zd.t_gust,0,zd.t_precip,zd.humidity); const tlc=tc.level.toLowerCase();
-    return `<tr>
-      <td><strong>${z.short}</strong><br><span style="color:var(--text-mute);font-size:11px">${z.region}</span></td>
-      <td><strong>${zd.gust}</strong> km/h</td>
-      <td style="color:var(--text-mute)">${zd.gust_max} km/h</td>
-      <td>${zd.wind} km/h</td>
-      <td>${zd.precip.toFixed(1)} mm</td>
-      <td>${zd.humidity}%</td>
-      <td><span class="pill ${mlc}">${zd.m_gust} km/h · ${zd.m_precip.toFixed(1)}mm</span></td>
-      <td><span class="pill ${tlc}">${zd.t_gust} km/h · ${zd.t_precip.toFixed(1)}mm</span></td>
-      <td><span class="pill ${lc}">${lvLabel(c.level)}</span></td>
-    </tr>`;
-  }).join("");
-
-  // ── Work matrix ─────────────────────────────────────────────────
-  const WORKS = [
-    {name:"Içamento UE (split/multisplit)",          r:["ok","eval","skip"]},
-    {name:"Içamento monobloco / bomba calor pesado", r:["ok","skip","skip"]},
-    {name:"Instalação em telhado / cobertura",        r:["ok","eval","skip"]},
-    {name:"Passagem de condutas exteriores",           r:["ok","ok",  "eval"]},
-    {name:"Vácuos de refrigeração (exterior)",         r:["ok","eval","skip"]},
-    {name:"Carga de fluido frigorigéneo",              r:["ok","ok",  "eval"]},
-    {name:"Extração industrial (condutas / teto)",     r:["ok","ok",  "eval"]},
-    {name:"Trabalhos em fachada / caixas elétr.",      r:["ok","eval","skip"]},
-    {name:"Todo o trabalho interior",                  r:["ok","ok",  "ok"  ]},
-  ];
-  const RL = {ok:"✅ Avançar",eval:"⚠️ Avaliar",skip:"🚫 Adiar"};
-  const RC = {ok:"green",    eval:"yellow",   skip:"red"};
-  const RI = {GREEN:0, YELLOW:1, RED:2};
-
-  let wHead=`<thead><tr><th class="wk-col">Tipo de trabalho</th>`;
-  DATA.zones.forEach(z=>{ wHead+=`<th>${z.short}</th>`; });
-  wHead+="</tr></thead><tbody>";
-  WORKS.forEach(w=>{
-    wHead+=`<tr><td class="wk-col">${w.name}</td>`;
-    DATA.zones.forEach(z=>{
-      const zd=today.zones[z.id];
-      const c=classify(zd.gust,zd.wind,zd.precip,zd.humidity);
-      const idx=RI[c.level]; const rule=w.r[idx];
-      wHead+=`<td><div class="cell ${RC[rule]} " style="font-size:11px">${RL[rule]}</div></td>`;
-    });
-    wHead+="</tr>";
-  });
-  document.getElementById("workMatrix").innerHTML=wHead+"</tbody>";
-
-  // ── Advice ──────────────────────────────────────────────────────
-  const adv=[];
-  if (greenZ.length===DATA.zones.length) {
-    adv.push(`<strong>Excelente dia em toda a ilha</strong> — avançar com içamentos, instalações em telhado e vácuos sem restrições. Aproveitar a janela.`);
-  } else if (greenZ.length) {
-    adv.push(`<strong>Concentrar exteriores em ${greenZ.join(", ")}</strong> — janela limpa.${(redZ.length||yellowZ.length)?" Adiar ou trocar por interior em "+[...redZ,...yellowZ].join(", ")+".":" Aproveitar o dia."}`);
-  } else {
-    adv.push(`<strong>Sem zona ideal hoje</strong> — priorizar trabalho de bancada, manutenções interiores e stock.`);
-  }
-  // Next best day
-  for (let di=1;di<DATA.days.length;di++) {
-    const dl=islandLevel(DATA.days[di]);
-    if (dl==="GREEN") {
-      adv.push(`<strong>Próxima janela verde: ${dShort(DATA.days[di].date)}</strong> — agendar içamentos pesados e instalações em telhado para esse dia.`);
-      break;
-    } else if (dl==="RED") {
-      adv.push(`<strong>Condições adversas previstas em ${dShort(DATA.days[di].date)}</strong> — reprogramar obra exterior.`);
-      break;
-    }
-  }
-  // Humidity note
-  const maxHum=Math.max(...DATA.zones.map(z=>today.zones[z.id].humidity));
-  if (maxHum>90) adv.push(`<strong>Humidade máxima de ${maxHum}% hoje</strong> — vácuos de refrigeração contraindicados. Usar bomba duplo estágio e aguardar período mais seco.`);
-  else if (maxHum<=75) adv.push(`<strong>Humidade baixa (${maxHum}% máx.)</strong> — condições ideais para vácuos profundos. Alvo &lt; 500 microns acessível hoje.`);
-
-  document.getElementById("advice").innerHTML=`<ol>${adv.map(a=>`<li>${a}</li>`).join("")}</ol>`;
-
-  // ── Windguru ────────────────────────────────────────────────────
-  document.getElementById("wgGrid").innerHTML=DATA.zones.map(z=>{
-    const links=z.wg.map((url,i)=>
-      `<a href="${url}" target="_blank" rel="noopener noreferrer">🌊 ${z.wg.length>1?"Spot "+(i+1):"Abrir Windguru"} ↗</a>`
-    ).join("");
-    return `<div class="wg-card">
-      <div class="wgz">${z.short}</div>
-      <div class="wgr">${z.region} · ${z.full}</div>
-      <div class="wglinks">${links}</div>
-    </div>`;
-  }).join("");
-
-})();
-</script>
 </body>
 </html>
