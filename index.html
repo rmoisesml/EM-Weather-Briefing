@@ -2,511 +2,679 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="EM Briefing">
 <meta name="theme-color" content="#1d4d8c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
-<title>EM Briefing Tático — 04/05/2026</title>
+<title>Briefing Tático Meteorológico — Electro Moisés</title>
 <style>
-  :root {
-    --green: #22863a; --green-bg: #e6f4ea; --green-border: #b7dfbf;
-    --yellow: #b08800; --yellow-bg: #fffbe6; --yellow-border: #ffe58f;
-    --red: #cf222e; --red-bg: #ffeef0; --red-border: #ffcdd2;
-    --accent: #1d4d8c; --accent-light: #e8f0fb;
-    --bg: #f7f7f5; --surface: #ffffff; --border: #e1e4e8;
-    --text: #24292f; --text-muted: #586069;
-    --radius: 10px; --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-         background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
-  .container { max-width: 900px; margin: 0 auto; padding: 12px; }
-  
-  /* HEADER */
-  .header { background: var(--accent); color: white; padding: 16px 20px;
-             border-radius: var(--radius); margin-bottom: 12px; }
-  .header h1 { font-size: 1.3em; font-weight: 700; }
-  .header .subtitle { font-size: 0.85em; opacity: 0.85; margin-top: 4px; }
-  
-  /* TODAY CARD */
-  .today-card { background: var(--surface); border-radius: var(--radius);
-                 border: 2px solid var(--accent); padding: 16px; margin-bottom: 12px;
-                 display: flex; align-items: center; gap: 16px; box-shadow: var(--shadow); }
-  .semaphore { width: 60px; height: 60px; border-radius: 50%; display: flex;
-               align-items: center; justify-content: center; font-size: 1.8em;
-               flex-shrink: 0; }
-  .sem-green { background: var(--green-bg); border: 3px solid var(--green); }
-  .sem-yellow { background: var(--yellow-bg); border: 3px solid var(--yellow); }
-  .sem-red { background: var(--red-bg); border: 3px solid var(--red); }
-  .today-text h2 { font-size: 1.1em; color: var(--accent); }
-  .today-text p { font-size: 0.9em; color: var(--text-muted); margin-top: 4px; }
-  
-  /* ZONE CHIPS */
-  .chips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                 gap: 10px; margin-bottom: 12px; }
-  .zone-chip { background: var(--surface); border-radius: var(--radius);
-               border: 1px solid var(--border); padding: 10px; box-shadow: var(--shadow); }
-  .chip-green { border-left: 4px solid var(--green); }
-  .chip-yellow { border-left: 4px solid var(--yellow); }
-  .chip-red { border-left: 4px solid var(--red); }
-  .chip-header { display: flex; justify-content: space-between; align-items: center;
-                  margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
-  .chip-name { font-weight: 700; font-size: 0.95em; color: var(--accent); }
-  .chip-badge { font-size: 0.75em; font-weight: 600; }
-  .chip-row { display: flex; justify-content: space-between; font-size: 0.8em;
-               padding: 2px 0; border-bottom: 1px solid var(--border); }
-  .chip-row:last-child { border-bottom: none; }
-  .chip-links { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
-  .wg-link { font-size: 0.72em; color: var(--accent); text-decoration: none;
-              background: var(--accent-light); padding: 2px 6px; border-radius: 4px; }
-  .wg-link:hover { background: var(--accent); color: white; }
-  
-  /* SECTION */
-  .section { background: var(--surface); border-radius: var(--radius);
-              border: 1px solid var(--border); margin-bottom: 12px;
-              box-shadow: var(--shadow); overflow: hidden; }
-  .section-title { background: var(--accent); color: white; padding: 10px 14px;
-                    font-size: 0.9em; font-weight: 700; letter-spacing: 0.3px; }
-  .section-body { overflow-x: auto; }
-  
-  /* TABLES */
-  table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
-  th { background: #f0f4f8; font-weight: 600; padding: 8px 6px; text-align: center;
-        border-bottom: 2px solid var(--border); white-space: nowrap; }
-  td { padding: 7px 6px; text-align: center; border-bottom: 1px solid var(--border); }
-  tr:last-child td { border-bottom: none; }
-  td:first-child { text-align: left; font-weight: 500; }
-  tr:hover { background: #f8fafc; }
-  
-  /* VERDICT CELLS */
-  .cell-green { background: var(--green-bg); color: var(--green); font-weight: 600; }
-  .cell-yellow { background: var(--yellow-bg); color: var(--yellow); font-weight: 600; }
-  .cell-red { background: var(--red-bg); color: var(--red); font-weight: 600; }
-  .green { color: var(--green); }
-  .yellow { color: var(--yellow); }
-  .red { color: var(--red); }
-  
-  /* WEEKLY MATRIX */
-  .matrix-cell { text-align: center; padding: 4px 3px; min-width: 65px; }
-  .mi { font-size: 1.1em; font-weight: 700; }
-  .mg { font-size: 0.75em; }
-  .mp { font-size: 0.72em; }
-  .today-row { outline: 2px solid var(--accent); }
-  .today-row td { background: var(--accent-light) !important; }
-  .today-row .cell-green { background: #c8e6c9 !important; }
-  .today-row .cell-yellow { background: #fff9c4 !important; }
-  .today-row .cell-red { background: #ffcdd2 !important; }
-  .day-col { text-align: left !important; font-size: 0.82em; white-space: nowrap; min-width: 72px; font-weight: 600; }
-  
-  /* ADVICE */
-  .advice-list { list-style: none; padding: 10px 14px; }
-  .advice-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.88em; }
-  .advice-list li:last-child { border-bottom: none; }
-  
-  /* FOOTER */
-  .footer { font-size: 0.75em; color: var(--text-muted); text-align: center; padding: 12px;
-             border-top: 1px solid var(--border); margin-top: 8px; }
+:root {
+  color-scheme: light;
+  --green: #22c55e; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+  --yellow: #f59e0b; --yellow-bg: #fffbeb; --yellow-border: #fde68a;
+  --red: #ef4444; --red-bg: #fef2f2; --red-border: #fecaca;
+  --accent: #1d4d8c; --accent-light: #dbeafe;
+  --bg: #f7f7f5; --surface: #ffffff; --border: #e5e7eb;
+  --text: #111827; --text-muted: #6b7280; --text-light: #9ca3af;
+  --radius: 12px; --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
 
-  @media (max-width: 600px) {
-    .chips-grid { grid-template-columns: 1fr 1fr; }
-    .today-card { flex-direction: column; align-items: flex-start; }
-    table { font-size: 0.75em; }
-    td, th { padding: 5px 3px; }
-    .matrix-cell { min-width: 52px; }
-  }
+/* Header */
+.header { background: var(--accent); color: white; padding: 20px 24px; border-radius: var(--radius); margin-bottom: 16px; }
+.header h1 { font-size: 20px; font-weight: 700; }
+.header .meta { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+/* Today card */
+.today-card { background: var(--surface); border-radius: var(--radius); padding: 20px 24px;
+               box-shadow: var(--shadow); margin-bottom: 16px; display: flex; align-items: center; gap: 20px; }
+.semaphore { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center;
+              justify-content: center; font-size: 28px; font-weight: 800; color: white; flex-shrink: 0; }
+.today-info h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.today-info p { color: var(--text-muted); font-size: 13px; }
+
+/* Zone chips */
+.zones-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.zone-chip { background: var(--surface); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow);
+              border-left: 4px solid; }
+.zone-chip h3 { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+.zone-chip .metric { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px; }
+.zone-chip .metric .val { font-weight: 600; color: var(--text); }
+.zone-chip .verdict-badge { margin-top: 8px; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; }
+
+/* Tables */
+.section-title { font-size: 15px; font-weight: 700; color: var(--accent); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--accent-light); }
+.table-wrap { overflow-x: auto; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+th { background: var(--accent); color: white; padding: 10px 8px; font-size: 11px; font-weight: 600; text-align: center; white-space: nowrap; }
+th:first-child { text-align: left; padding-left: 14px; }
+td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
+td:first-child { text-align: left; padding-left: 14px; font-weight: 600; font-size: 12px; }
+.today-row td { background: #eff6ff !important; border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); }
+.today-row td:first-child { color: var(--accent); }
+tr:last-child td { border-bottom: none; }
+
+.cell-v { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.2; }
+.cell-icon { font-size: 14px; font-weight: 800; }
+.cell-gust { font-size: 11px; color: var(--text-muted); }
+.cell-precip { font-size: 10px; }
+.cell-precip.has-rain { color: #3b82f6; }
+.cell-precip.no-rain { color: var(--text-light); }
+
+/* Decision table */
+.dt td { font-size: 11px; padding: 7px 6px; }
+.dt td:first-child { font-size: 11px; }
+
+/* Work matrix */
+.work-cell { padding: 5px 4px; font-size: 11px; border-radius: 4px; font-weight: 600; }
+
+/* Advice */
+.advice-card { background: var(--surface); border-radius: var(--radius); padding: 16px 20px;
+                box-shadow: var(--shadow); margin-bottom: 16px; }
+.advice-item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.advice-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* Windguru */
+.windguru-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.wg-card { background: var(--accent); color: white; border-radius: 10px; padding: 10px 12px;
+            text-decoration: none; display: block; transition: opacity .15s; text-align: center; }
+.wg-card:hover { opacity: 0.85; }
+.wg-card .wg-zone { font-size: 10px; opacity: 0.8; }
+.wg-card .wg-name { font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+/* Footer */
+.footer { text-align: center; color: var(--text-muted); font-size: 11px; padding: 16px 0; }
+
+/* Verdict colors utility */
+.v-verde { color: var(--green); }
+.v-amarelo { color: var(--yellow); }
+.v-vermelho { color: var(--red); }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- HEADER -->
-  <div class="header">
-    <h1>⛅ Electro Moisés — Briefing Tático</h1>
-    <div class="subtitle">📍 Ilha Terceira, Açores &nbsp;|&nbsp; 🕐 04 May 2026 — 03:06 (hora Açores) &nbsp;|&nbsp; 🔄 Open-Meteo (ECMWF+ICON+GFS) + IPMA + Yr.no</div>
-  </div>
 
-  <!-- TODAY CARD -->
-  <div class="today-card">
-    <div class="semaphore sem-green">🟢</div>
-    <div class="today-text">
-      <h2>Hoje — Monday, 04 de may de 2026</h2>
-      <p>🟢 Condições favoráveis em toda a ilha. Operações exteriores autorizadas.</p>
-    </div>
-  </div>
+<div class="header">
+  <h1>⛅ Briefing Tático Meteorológico — Electro Moisés</h1>
+  <div class="meta">Ilha Terceira, Açores &nbsp;·&nbsp; Gerado: 2026-05-05 07:17 (hora Açores) &nbsp;·&nbsp; Open-Meteo (ECMWF + ICON + GFS) + IPMA + Yr.no</div>
+</div>
 
-  <!-- ZONE CHIPS -->
-  <div class="chips-grid">
-    
-    <div class="zone-chip chip-green">
-        <div class="chip-header">
-            <span class="chip-name">Sul</span>
-            <span class="chip-badge">🟢 VERDE</span>
-        </div>
-        <div class="chip-data">
-            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
-            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
-            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
-            <div class="chip-row"><span>💧 Humidade</span><span>68%</span></div>
-            <div class="chip-row"><span>🌡️ Temp.</span><span>14.7°C</span></div>
-        </div>
-        <div class="chip-links"><a href="https://www.windguru.cz/88976" target="_blank" class="wg-link">Angra</a></div>
-    </div>
-    <div class="zone-chip chip-green">
-        <div class="chip-header">
-            <span class="chip-name">Norte</span>
-            <span class="chip-badge">🟢 VERDE</span>
-        </div>
-        <div class="chip-data">
-            <div class="chip-row"><span>💨 Rajadas</span><span><strong>35 km/h</strong> <small>(pior 45 km/h)</small></span></div>
-            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
-            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
-            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
-            <div class="chip-row"><span>🌡️ Temp.</span><span>15.2°C</span></div>
-        </div>
-        <div class="chip-links"><a href="https://www.windguru.cz/35922" target="_blank" class="wg-link">Biscoitos</a></div>
-    </div>
-    <div class="zone-chip chip-green">
-        <div class="chip-header">
-            <span class="chip-name">Este</span>
-            <span class="chip-badge">🟢 VERDE</span>
-        </div>
-        <div class="chip-data">
-            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
-            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
-            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
-            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
-            <div class="chip-row"><span>🌡️ Temp.</span><span>14.9°C</span></div>
-        </div>
-        <div class="chip-links"><a href="https://www.windguru.cz/35923" target="_blank" class="wg-link">Praia V.</a></div>
-    </div>
-    <div class="zone-chip chip-green">
-        <div class="chip-header">
-            <span class="chip-name">Sudeste</span>
-            <span class="chip-badge">🟢 VERDE</span>
-        </div>
-        <div class="chip-data">
-            <div class="chip-row"><span>💨 Rajadas</span><span><strong>37 km/h</strong> <small>(pior 48 km/h)</small></span></div>
-            <div class="chip-row"><span>🌬️ Vento</span><span>21 km/h</span></div>
-            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
-            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
-            <div class="chip-row"><span>🌡️ Temp.</span><span>14.9°C</span></div>
-        </div>
-        <div class="chip-links"><a href="https://www.windguru.cz/895975" target="_blank" class="wg-link">Lajes</a></div>
-    </div>
-    <div class="zone-chip chip-green">
-        <div class="chip-header">
-            <span class="chip-name">Oeste</span>
-            <span class="chip-badge">🟢 VERDE</span>
-        </div>
-        <div class="chip-data">
-            <div class="chip-row"><span>💨 Rajadas</span><span><strong>35 km/h</strong> <small>(pior 45 km/h)</small></span></div>
-            <div class="chip-row"><span>🌬️ Vento</span><span>19 km/h</span></div>
-            <div class="chip-row"><span>🌧️ Chuva</span><span>0.0 mm</span></div>
-            <div class="chip-row"><span>💧 Humidade</span><span>67%</span></div>
-            <div class="chip-row"><span>🌡️ Temp.</span><span>15.6°C</span></div>
-        </div>
-        <div class="chip-links"><a href="https://www.windguru.cz/14904" target="_blank" class="wg-link">Sta. Bárbara A</a> <a href="https://www.windguru.cz/32852" target="_blank" class="wg-link">Sta. Bárbara B</a></div>
-    </div>
-  </div>
 
-  <!-- WEEKLY MATRIX -->
-  <div class="section">
-    <div class="section-title">📅 Matriz Semanal — 7 Dias × 5 Zonas (07h–17h)</div>
-    <div class="section-body">
-    <table>
-      <thead>
-        <tr>
-          <th class="day-col">Dia</th>
-          <th>🏝 Ilha</th>
-          <th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th>
-        </tr>
-        <tr style="font-size:0.72em; color:#888;">
-          <td></td><td></td>
-          <td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td><td>✓/km/mm</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="today-row"><td class='day-col'>Seg 04/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">37 km/h</div>
-            <div class="mp" style="color:#888">0.0mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">35 km/h</div>
-            <div class="mp" style="color:#888">0.0mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">37 km/h</div>
-            <div class="mp" style="color:#888">0.0mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">37 km/h</div>
-            <div class="mp" style="color:#888">0.0mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">35 km/h</div>
-            <div class="mp" style="color:#888">0.0mm</div>
-        </td></tr><tr><td class='day-col'>Ter 05/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">29 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.4mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">27 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.4mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">29 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.4mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">29 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.4mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">27 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.4mm</div>
-        </td></tr><tr><td class='day-col'>Qua 06/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">23 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.6mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">21 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.7mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">23 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.6mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">23 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.6mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">21 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.7mm</div>
-        </td></tr><tr><td class='day-col'>Qui 07/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">65 km/h</div>
-            <div class="mp" style="color:#5db8e8">1.6mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">64 km/h</div>
-            <div class="mp" style="color:#5db8e8">2.6mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">65 km/h</div>
-            <div class="mp" style="color:#5db8e8">1.3mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">65 km/h</div>
-            <div class="mp" style="color:#5db8e8">1.3mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">64 km/h</div>
-            <div class="mp" style="color:#5db8e8">2.9mm</div>
-        </td></tr><tr><td class='day-col'>Sex 08/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">61 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.7mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">61 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.8mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">61 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.5mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">61 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.5mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">61 km/h</div>
-            <div class="mp" style="color:#5db8e8">1.2mm</div>
-        </td></tr><tr><td class='day-col'>Sáb 09/05</td><td class="matrix-cell cell-yellow"><div class="mi">⚠</div></td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">53 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.9mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">49 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.9mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">53 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.9mm</div>
-        </td><td class="matrix-cell cell-yellow">
-            <div class="mi">⚠</div>
-            <div class="mg">53 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.9mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">49 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.9mm</div>
-        </td></tr><tr><td class='day-col'>Dom 10/05</td><td class="matrix-cell cell-green"><div class="mi">✓</div></td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">38 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.1mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">34 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.1mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">38 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.1mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">38 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.1mm</div>
-        </td><td class="matrix-cell cell-green">
-            <div class="mi">✓</div>
-            <div class="mg">34 km/h</div>
-            <div class="mp" style="color:#5db8e8">0.1mm</div>
-        </td></tr>
-      </tbody>
-    </table>
-    </div>
+<div class="today-card">
+  <div class="semaphore" style="background:#22c55e">✓</div>
+  <div class="today-info">
+    <h2>Hoje — Ter 5/Mai &nbsp; 🟢 VERDE</h2>
+    <p>Condições favoráveis — todos os trabalhos exteriores podem avançar.</p>
+    <p style="margin-top:6px;font-size:12px;color:var(--text-light)">
+      Ilha Terceira · 2026-05-05 · Avaliação: Vento + Chuva + Humidade por zona
+    </p>
   </div>
+</div>
 
-  <!-- TODAY DECISION TABLE -->
-  <div class="section">
-    <div class="section-title">📊 Decisão Operacional de Hoje por Zona</div>
-    <div class="section-body">
-    <table>
-      <thead>
-        <tr>
-          <th>Zona</th><th>Raj.méd</th><th>Raj.pior</th><th>Vento</th>
-          <th>Chuva</th><th>Humidade</th>
-          <th>Manhã 07–13h</th><th>Tarde 14–17h</th><th>Veredicto</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-        <tr>
-            <td><strong>Sul</strong></td>
-            <td>37 km/h</td>
-            <td>48 km/h</td>
-            <td>21 km/h</td>
-            <td>0.0 mm</td>
-            <td>68%</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="cell-green"><strong>🟢 VERDE</strong></td>
-        </tr>
-        <tr>
-            <td><strong>Norte</strong></td>
-            <td>35 km/h</td>
-            <td>45 km/h</td>
-            <td>21 km/h</td>
-            <td>0.0 mm</td>
-            <td>67%</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="cell-green"><strong>🟢 VERDE</strong></td>
-        </tr>
-        <tr>
-            <td><strong>Este</strong></td>
-            <td>37 km/h</td>
-            <td>48 km/h</td>
-            <td>21 km/h</td>
-            <td>0.0 mm</td>
-            <td>67%</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="cell-green"><strong>🟢 VERDE</strong></td>
-        </tr>
-        <tr>
-            <td><strong>Sudeste</strong></td>
-            <td>37 km/h</td>
-            <td>48 km/h</td>
-            <td>21 km/h</td>
-            <td>0.0 mm</td>
-            <td>67%</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="cell-green"><strong>🟢 VERDE</strong></td>
-        </tr>
-        <tr>
-            <td><strong>Oeste</strong></td>
-            <td>35 km/h</td>
-            <td>45 km/h</td>
-            <td>19 km/h</td>
-            <td>0.0 mm</td>
-            <td>67%</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="green">🟢 VERDE</td>
-            <td class="cell-green"><strong>🟢 VERDE</strong></td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-  </div>
+<div class="zones-grid">
 
-  <!-- WORK MATRIX -->
-  <div class="section">
-    <div class="section-title">🔧 Matriz de Trabalhos Hoje (por zona)</div>
-    <div class="section-body">
-    <table>
-      <thead>
-        <tr>
-          <th>Tipo de Trabalho</th>
-          <th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Içamento UE (split/multisplit)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Içamento monobloco/bomba calor pesado</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Instalação em telhado/cobertura</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Passagem de condutas exteriores</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Vácuos de refrigeração (exterior)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Carga de fluido frigorigéneo</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Extração industrial (condutas teto)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Trabalhos em fachada (caixas elét.)</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td><td class="cell-green">✅ Avançar</td></tr><tr><td>Todo o trabalho interior</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td><td class="cell-green">✅ Sempre</td></tr>
-      </tbody>
-    </table>
-    </div>
-  </div>
+<div class="zone-chip" style="border-color:#22c55e;background:#f0fdf4">
+  <h3>Sul — Angra</h3>
+  <div class="metric"><span>Raj. méd.</span><span class="val">28.9 km/h</span></div>
+  <div class="metric"><span>Raj. pior</span><span class="val">37.4 km/h</span></div>
+  <div class="metric"><span>Vento</span><span class="val">15.3 km/h</span></div>
+  <div class="metric"><span>Chuva</span><span class="val">0.4 mm</span></div>
+  <div class="metric"><span>Humidade</span><span class="val">70.8%</span></div>
+  <div class="metric"><span>Temperatura</span><span class="val">14.9°C</span></div>
+  <div class="verdict-badge" style="background:#22c55e;color:white">🟢 VERDE</div>
+</div>
 
-  <!-- STRATEGIC ADVICE -->
-  <div class="section">
-    <div class="section-title">💡 Conselhos Estratégicos</div>
-    <ul class="advice-list">
-      <li>📅 Melhor janela esta semana: Seg 04/05 (5/5 zonas verdes).</li>
-    </ul>
-  </div>
 
-  <!-- WINDGURU -->
-  <div class="section">
-    <div class="section-title">🌊 Windguru — Consulta Rápida</div>
-    <div style="padding:10px 14px; display:flex; flex-wrap:wrap; gap:8px;">
-      <a href="https://www.windguru.cz/88976" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Sul — Angra</div>
-      </a>
-      <a href="https://www.windguru.cz/35922" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Norte — Biscoitos</div>
-      </a>
-      <a href="https://www.windguru.cz/35923" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Este — Praia V.</div>
-      </a>
-      <a href="https://www.windguru.cz/895975" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Sudeste — Lajes</div>
-      </a>
-      <a href="https://www.windguru.cz/14904" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Oeste — Sta.Bárbara A</div>
-      </a>
-      <a href="https://www.windguru.cz/32852" target="_blank" style="text-decoration:none;">
-        <div style="background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:8px 14px;color:var(--accent);font-weight:600;font-size:0.85em;">📍 Oeste — Sta.Bárbara B</div>
-      </a>
-    </div>
-  </div>
+<div class="zone-chip" style="border-color:#22c55e;background:#f0fdf4">
+  <h3>Norte — Biscoitos</h3>
+  <div class="metric"><span>Raj. méd.</span><span class="val">27.1 km/h</span></div>
+  <div class="metric"><span>Raj. pior</span><span class="val">33.8 km/h</span></div>
+  <div class="metric"><span>Vento</span><span class="val">15.4 km/h</span></div>
+  <div class="metric"><span>Chuva</span><span class="val">0.4 mm</span></div>
+  <div class="metric"><span>Humidade</span><span class="val">70.2%</span></div>
+  <div class="metric"><span>Temperatura</span><span class="val">15.3°C</span></div>
+  <div class="verdict-badge" style="background:#22c55e;color:white">🟢 VERDE</div>
+</div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <p><strong>Fontes:</strong> Open-Meteo (ECMWF IFS0.25°, ICON Seamless, GFS Seamless) · IPMA · Yr.no (Met Norway)</p>
-    <p><strong>Metodologia:</strong> Consenso de 3 modelos numéricos · Rajadas = média dos máximos por modelo · Janelas 07h–13h (manhã) e 14h–17h (tarde) hora Açores (UTC−1)</p>
-    <p style="margin-top:4px;">Gerado automaticamente — Electro Moisés, Ilha Terceira, Açores</p>
-  </div>
+
+<div class="zone-chip" style="border-color:#22c55e;background:#f0fdf4">
+  <h3>Este — Praia da Vitória</h3>
+  <div class="metric"><span>Raj. méd.</span><span class="val">28.9 km/h</span></div>
+  <div class="metric"><span>Raj. pior</span><span class="val">37.4 km/h</span></div>
+  <div class="metric"><span>Vento</span><span class="val">16.3 km/h</span></div>
+  <div class="metric"><span>Chuva</span><span class="val">0.4 mm</span></div>
+  <div class="metric"><span>Humidade</span><span class="val">70.1%</span></div>
+  <div class="metric"><span>Temperatura</span><span class="val">15.0°C</span></div>
+  <div class="verdict-badge" style="background:#22c55e;color:white">🟢 VERDE</div>
+</div>
+
+
+<div class="zone-chip" style="border-color:#22c55e;background:#f0fdf4">
+  <h3>Sudeste — Lajes</h3>
+  <div class="metric"><span>Raj. méd.</span><span class="val">28.9 km/h</span></div>
+  <div class="metric"><span>Raj. pior</span><span class="val">37.4 km/h</span></div>
+  <div class="metric"><span>Vento</span><span class="val">16.3 km/h</span></div>
+  <div class="metric"><span>Chuva</span><span class="val">0.4 mm</span></div>
+  <div class="metric"><span>Humidade</span><span class="val">70.1%</span></div>
+  <div class="metric"><span>Temperatura</span><span class="val">15.0°C</span></div>
+  <div class="verdict-badge" style="background:#22c55e;color:white">🟢 VERDE</div>
+</div>
+
+
+<div class="zone-chip" style="border-color:#22c55e;background:#f0fdf4">
+  <h3>Oeste — Sta. Bárbara</h3>
+  <div class="metric"><span>Raj. méd.</span><span class="val">27.1 km/h</span></div>
+  <div class="metric"><span>Raj. pior</span><span class="val">33.8 km/h</span></div>
+  <div class="metric"><span>Vento</span><span class="val">13.3 km/h</span></div>
+  <div class="metric"><span>Chuva</span><span class="val">0.4 mm</span></div>
+  <div class="metric"><span>Humidade</span><span class="val">70.3%</span></div>
+  <div class="metric"><span>Temperatura</span><span class="val">15.6°C</span></div>
+  <div class="verdict-badge" style="background:#22c55e;color:white">🟢 VERDE</div>
+</div>
 
 </div>
-</body>
-</html>
+<div class="section-title">📅 Matriz Semanal — 7 Dias × 5 Zonas</div>
+<div class="table-wrap"><table>
+<thead><tr>
+<th style="min-width:80px">Dia</th>
+<th>🏝 Ilha</th>
+<th>Sul</th>
+<th>Norte</th>
+<th>Este</th>
+<th>Sudeste</th>
+<th>Oeste</th>
+</tr></thead><tbody>
+<tr class="today-row">
+<td><strong>📌 Ter 5/Mai</strong></td>
+<td style="color:#22c55e;font-weight:700;font-size:16px">✓</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">28.9 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">27.1 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">28.9 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">28.9 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">27.1 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Qua 6/Mai</td>
+<td style="color:#22c55e;font-weight:700;font-size:16px">✓</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">20.5 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">17.2 km/h</span>
+    <span class="cell-precip has-rain">0.5mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">20.5 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">20.5 km/h</span>
+    <span class="cell-precip has-rain">0.4mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">17.2 km/h</span>
+    <span class="cell-precip has-rain">0.5mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Qui 7/Mai</td>
+<td style="color:#f59e0b;font-weight:700;font-size:16px">⚠</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.0 km/h</span>
+    <span class="cell-precip has-rain">1.5mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">65.3 km/h</span>
+    <span class="cell-precip has-rain">2.6mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.0 km/h</span>
+    <span class="cell-precip has-rain">1.5mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.0 km/h</span>
+    <span class="cell-precip has-rain">1.5mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">65.3 km/h</span>
+    <span class="cell-precip has-rain">2.6mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Sex 8/Mai</td>
+<td style="color:#f59e0b;font-weight:700;font-size:16px">⚠</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.8 km/h</span>
+    <span class="cell-precip has-rain">1.1mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">57.6 km/h</span>
+    <span class="cell-precip has-rain">1.1mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.8 km/h</span>
+    <span class="cell-precip has-rain">1.0mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">61.8 km/h</span>
+    <span class="cell-precip has-rain">1.0mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">57.6 km/h</span>
+    <span class="cell-precip has-rain">1.3mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Sáb 9/Mai</td>
+<td style="color:#f59e0b;font-weight:700;font-size:16px">⚠</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">46.0 km/h</span>
+    <span class="cell-precip has-rain">1.9mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">43.0 km/h</span>
+    <span class="cell-precip has-rain">1.9mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">46.0 km/h</span>
+    <span class="cell-precip has-rain">1.3mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">46.0 km/h</span>
+    <span class="cell-precip has-rain">1.3mm</span>
+  </div>
+</td>
+
+<td style="background:#fffbeb">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#f59e0b">⚠</span>
+    <span class="cell-gust">43.0 km/h</span>
+    <span class="cell-precip has-rain">2.3mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Dom 10/Mai</td>
+<td style="color:#22c55e;font-weight:700;font-size:16px">✓</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">25.9 km/h</span>
+    <span class="cell-precip has-rain">1.3mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">24.3 km/h</span>
+    <span class="cell-precip has-rain">1.2mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">25.9 km/h</span>
+    <span class="cell-precip has-rain">1.0mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">25.9 km/h</span>
+    <span class="cell-precip has-rain">1.0mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">24.3 km/h</span>
+    <span class="cell-precip has-rain">1.2mm</span>
+  </div>
+</td>
+</tr>
+<tr>
+<td>Seg 11/Mai</td>
+<td style="color:#22c55e;font-weight:700;font-size:16px">✓</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">39.2 km/h</span>
+    <span class="cell-precip has-rain">1.6mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">37.8 km/h</span>
+    <span class="cell-precip has-rain">1.5mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">39.2 km/h</span>
+    <span class="cell-precip has-rain">1.6mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">39.2 km/h</span>
+    <span class="cell-precip has-rain">1.6mm</span>
+  </div>
+</td>
+
+<td style="background:#f0fdf4">
+  <div class="cell-v">
+    <span class="cell-icon" style="color:#22c55e">✓</span>
+    <span class="cell-gust">37.8 km/h</span>
+    <span class="cell-precip has-rain">1.5mm</span>
+  </div>
+</td>
+</tr>
+</tbody></table></div>
+<div class="section-title">🎯 Tabela de Decisão — Hoje por Zona</div>
+<div class="table-wrap"><table class="dt">
+<thead><tr>
+<th>Zona</th><th>Raj. méd</th><th>Raj. pior</th><th>Vento</th>
+<th>Chuva 07-17h</th><th>Humidade</th><th>☀️ Manhã 07-13h</th>
+<th>🌤 Tarde 14-17h</th><th>Veredicto</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Sul — Angra</strong></td>
+<td>28.9 km/h</td>
+<td style="color:var(--text-muted)">37.4 km/h</td>
+<td>15.3 km/h</td>
+<td style="color:#22c55e;font-weight:600">0.4mm</td>
+<td style="color:#22c55e;font-weight:600">70.8%</td>
+<td style="color:#22c55e;font-weight:600">0.3mm</td>
+<td style="color:#22c55e;font-weight:600">0.1mm</td>
+<td style="background:#22c55e;color:white;font-weight:700;border-radius:6px">🟢 VERDE</td>
+</tr>
+<tr>
+<td><strong>Norte — Biscoitos</strong></td>
+<td>27.1 km/h</td>
+<td style="color:var(--text-muted)">33.8 km/h</td>
+<td>15.4 km/h</td>
+<td style="color:#22c55e;font-weight:600">0.4mm</td>
+<td style="color:#22c55e;font-weight:600">70.2%</td>
+<td style="color:#22c55e;font-weight:600">0.3mm</td>
+<td style="color:#22c55e;font-weight:600">0.1mm</td>
+<td style="background:#22c55e;color:white;font-weight:700;border-radius:6px">🟢 VERDE</td>
+</tr>
+<tr>
+<td><strong>Este — Praia da Vitória</strong></td>
+<td>28.9 km/h</td>
+<td style="color:var(--text-muted)">37.4 km/h</td>
+<td>16.3 km/h</td>
+<td style="color:#22c55e;font-weight:600">0.4mm</td>
+<td style="color:#22c55e;font-weight:600">70.1%</td>
+<td style="color:#22c55e;font-weight:600">0.3mm</td>
+<td style="color:#22c55e;font-weight:600">0.1mm</td>
+<td style="background:#22c55e;color:white;font-weight:700;border-radius:6px">🟢 VERDE</td>
+</tr>
+<tr>
+<td><strong>Sudeste — Lajes</strong></td>
+<td>28.9 km/h</td>
+<td style="color:var(--text-muted)">37.4 km/h</td>
+<td>16.3 km/h</td>
+<td style="color:#22c55e;font-weight:600">0.4mm</td>
+<td style="color:#22c55e;font-weight:600">70.1%</td>
+<td style="color:#22c55e;font-weight:600">0.3mm</td>
+<td style="color:#22c55e;font-weight:600">0.1mm</td>
+<td style="background:#22c55e;color:white;font-weight:700;border-radius:6px">🟢 VERDE</td>
+</tr>
+<tr>
+<td><strong>Oeste — Sta. Bárbara</strong></td>
+<td>27.1 km/h</td>
+<td style="color:var(--text-muted)">33.8 km/h</td>
+<td>13.3 km/h</td>
+<td style="color:#22c55e;font-weight:600">0.4mm</td>
+<td style="color:#22c55e;font-weight:600">70.3%</td>
+<td style="color:#22c55e;font-weight:600">0.3mm</td>
+<td style="color:#22c55e;font-weight:600">0.1mm</td>
+<td style="background:#22c55e;color:white;font-weight:700;border-radius:6px">🟢 VERDE</td>
+</tr>
+</tbody></table></div>
+<div class="section-title">🔧 Matriz de Trabalhos — Hoje por Zona</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Tipo de Trabalho</th>
+<th>Sul</th>
+<th>Norte</th>
+<th>Este</th>
+<th>Sudeste</th>
+<th>Oeste</th>
+</tr></thead><tbody>
+<tr><td>Içamento UE (split/multisplit)</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Içamento monobloco / bomba calor pesado</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Instalação em telhado/cobertura</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Passagem de condutas exteriores</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Vácuos de refrigeração (exterior)</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Carga fluido frigorigéneo</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Extração industrial (condutas teto)</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Trabalhos em fachada (caixas elét.)</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Avançar</div></td>
+</tr>
+<tr><td>Todo o trabalho interior</td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Sempre</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Sempre</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Sempre</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Sempre</div></td>
+<td style="background:#f0fdf4"><div class="work-cell">✅ Sempre</div></td>
+</tr>
+</tbody></table></div>
+<div class="section-title">💡 Conselhos Estratégicos</div>
+<div class="advice-card">
+<div class="advice-item">🏆 <strong>Dia ideal para trabalhos exteriores.</strong> Aproveitar para içamentos de equipamentos pesados (bombas de calor, multisplits) e trabalhos em cobertura.</div>
+<div class="advice-item">📅 <strong>Atenção a partir de Qui 7:</strong> modelos indicam agravamento — reagendar trabalhos críticos em altitude para os próximos 2 dias se possível.</div>
+<div class="advice-item">✅ <strong>Humidade favorável (71%):</strong> condições ideais para vácuos de refrigeração e carga de fluido frigorigéneo.</div>
+</div>
+<div class="section-title">🌬 Windguru — Consulta Rápida</div>
+<div class="windguru-grid">
+<a href="https://windguru.cz/88976" target="_blank" class="wg-card">
+  <div class="wg-zone">Sul</div>
+  <div class="wg-name">🔗 Sul - Angra</div>
+</a>
+<a href="https://windguru.cz/35922" target="_blank" class="wg-card">
+  <div class="wg-zone">Norte</div>
+  <div class="wg-name">🔗 Biscoitos</div>
+</a>
+<a href="https://windguru.cz/35923" target="_blank" class="wg-card">
+  <div class="wg-zone">Este</div>
+  <div class="wg-name">🔗 Praia da Vitória</div>
+</a>
+<a href="https://windguru.cz/895975" target="_blank" class="wg-card">
+  <div class="wg-zone">Sudeste</div>
+  <div class="wg-name">🔗 Lajes</div>
+</a>
+<a href="https://windguru.cz/14904" target="_blank" class="wg-card">
+  <div class="wg-zone">Oeste</div>
+  <div class="wg-name">🔗 Sta. Bárbara 1</div>
+</a>
+<a href="https://windguru.cz/32852" target="_blank" class="wg-card">
+  <div class="wg-zone">Oeste</div>
+  <div class="wg-name">🔗 Sta. Bárbara 2</div>
+</a>
+</div>
+
+<div class="footer">
+  <p><strong>Fontes:</strong> Open-Meteo (ECMWF IFS 0.25°, ICON Seamless, GFS Seamless) · IPMA · Yr.no (Met Norway)</p>
+  <p style="margin-top:4px"><strong>Metodologia:</strong> Consenso de 3 modelos · Rajadas: média dos máximos por modelo · 
+  Chuva: acumulado 07h–17h (Açores UTC-1) · Veredicto: critério mais restritivo (vento + chuva + humidade)</p>
+  <p style="margin-top:6px;color:var(--text-light)">Gerado automaticamente · Electro Moisés © 2026 · Ilha Terceira, Açores</p>
+</div>
+
+</div></body></html>
