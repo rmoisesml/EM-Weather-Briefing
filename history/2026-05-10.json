@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-10",
+  "zones": {
+    "Sul": {
+      "gust_avg": 65.5,
+      "gust_worst": 85.3,
+      "wind_avg": 28.01212121212121,
+      "prec_full": 2.5,
+      "prec_hours": 4.0,
+      "prec_max_hourly": 0.39999999999999997,
+      "hum_avg": 83.84848484848486,
+      "regime": "AGUACEIROS",
+      "confidence": "HIGH",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Norte": {
+      "gust_avg": 57.25,
+      "gust_worst": 68.8,
+      "wind_avg": 28.848484848484848,
+      "prec_full": 3.1666666666666665,
+      "prec_hours": 5.333333333333333,
+      "prec_max_hourly": 0.5333333333333333,
+      "hum_avg": 83.66666666666667,
+      "regime": "AGUACEIROS",
+      "confidence": "HIGH",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Este": {
+      "gust_avg": 65.5,
+      "gust_worst": 85.3,
+      "wind_avg": 30.454545454545457,
+      "prec_full": 2.1999999999999997,
+      "prec_hours": 3.6666666666666665,
+      "prec_max_hourly": 0.39999999999999997,
+      "hum_avg": 82.27272727272727,
+      "regime": "AGUACEIROS",
+      "confidence": "HIGH",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Sudeste": {
+      "gust_avg": 65.5,
+      "gust_worst": 85.3,
+      "wind_avg": 30.454545454545457,
+      "prec_full": 2.1999999999999997,
+      "prec_hours": 3.6666666666666665,
+      "prec_max_hourly": 0.39999999999999997,
+      "hum_avg": 82.27272727272727,
+      "regime": "AGUACEIROS",
+      "confidence": "HIGH",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Oeste": {
+      "gust_avg": 57.25,
+      "gust_worst": 68.8,
+      "wind_avg": 27.19393939393939,
+      "prec_full": 3.0666666666666664,
+      "prec_hours": 5.666666666666667,
+      "prec_max_hourly": 0.5333333333333333,
+      "hum_avg": 85.06060606060606,
+      "regime": "AGUACEIROS",
+      "confidence": "HIGH",
+      "veredicto": "\ud83d\udfe1"
+    }
+  }
+}
