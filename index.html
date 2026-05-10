@@ -2,612 +2,276 @@
 <html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Briefing Tático Meteorológico — Electro Moisés</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="EM Briefing">
 <meta name="theme-color" content="#1d4d8c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
+<title>Briefing Tático Meteo · Electro Moisés · 10/05/2026</title>
 <style>
-:root {
-  color-scheme: light;
-  --bg: #f7f7f5;
-  --surface: #ffffff;
-  --surface-2: #f1f3f6;
-  --border: #e3e6eb;
-  --text: #1a2230;
-  --text-muted: #5a6478;
-  --accent: #1d4d8c;
-  --accent-light: #e6f0fa;
-  --green: #1f9d55;
-  --green-bg: #e6f7ed;
-  --yellow: #d97706;
-  --yellow-bg: #fff4e0;
-  --red: #c0392b;
-  --red-bg: #fbe6e3;
-  --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
-}
-* { box-sizing: border-box; }
-body {
-  margin:0; padding:0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg); color: var(--text);
-  line-height: 1.45; font-size: 14.5px;
-}
-.wrap { max-width: 1180px; margin: 0 auto; padding: 14px 14px 60px; }
-header.top {
-  background: linear-gradient(135deg, var(--accent) 0%, #2d6cb3 100%);
-  color: white; padding: 18px 18px 16px; border-radius: 12px;
-  box-shadow: var(--shadow); margin-bottom: 14px;
-}
-header.top h1 {
-  margin: 0 0 6px; font-size: 19px; font-weight: 700; letter-spacing: -0.2px;
-}
-header.top .meta { font-size: 12.5px; opacity: 0.92; }
-.banner-warn {
-  background: var(--yellow-bg); color: #7a3f00;
-  border-left: 4px solid var(--yellow); padding: 10px 12px;
-  border-radius: 6px; margin-bottom: 14px; font-size: 13px;
-}
-.today-card {
-  background: var(--surface); border-radius: 12px; padding: 18px;
-  box-shadow: var(--shadow); margin-bottom: 14px;
-  display: flex; gap: 16px; align-items: center;
-}
-.semaforo {
-  width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; font-weight: 700; color: white;
-}
-.semaforo.green { background: var(--green); }
-.semaforo.yellow { background: var(--yellow); }
-.semaforo.red { background: var(--red); }
-.today-text h2 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
-.today-text p { margin: 0; color: var(--text-muted); font-size: 13.5px; }
-.section {
-  background: var(--surface); border-radius: 12px; padding: 14px 14px 16px;
-  box-shadow: var(--shadow); margin-bottom: 14px;
-}
-.section h3 {
-  margin: 0 0 10px; font-size: 14px; text-transform: uppercase;
-  letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600;
-}
-.zone-chips {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 8px;
-}
-.chip {
-  background: var(--surface-2); border-radius: 10px; padding: 10px 12px;
-  border-left: 4px solid var(--green);
-}
-.chip.green { border-left-color: var(--green); }
-.chip.yellow { border-left-color: var(--yellow); }
-.chip.red { border-left-color: var(--red); }
-.chip .zname { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
-.chip .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; font-size: 12px; color: var(--text-muted); }
-.chip .stats b { color: var(--text); font-weight: 600; }
-.chip .verdict-pill {
-  display: inline-block; padding: 2px 8px; border-radius: 999px;
-  font-size: 11px; font-weight: 600; margin-top: 6px;
-}
-.chip.green .verdict-pill { background: var(--green-bg); color: var(--green); }
-.chip.yellow .verdict-pill { background: var(--yellow-bg); color: var(--yellow); }
-.chip.red .verdict-pill { background: var(--red-bg); color: var(--red); }
-
-.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table.matrix {
-  border-collapse: collapse; width: 100%; min-width: 720px; font-size: 12.5px;
-}
-table.matrix th, table.matrix td {
-  padding: 7px 8px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle;
-}
-table.matrix th {
-  background: var(--surface-2); font-weight: 600; color: var(--text-muted);
-  font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px;
-}
-table.matrix th.day-col, table.matrix td.day-col {
-  position: sticky; left: 0; background: var(--surface); text-align: left;
-  font-weight: 600; min-width: 90px; z-index: 2;
-}
-table.matrix th.day-col { background: var(--surface-2); }
-table.matrix tr.today-row td.day-col { background: var(--accent-light); color: var(--accent); }
-table.matrix tr.today-row td { background: var(--accent-light); }
-table.matrix .cell-3 .ico { font-size: 16px; font-weight: 700; line-height: 1.1; }
-table.matrix .cell-3 .gust { font-size: 11.5px; color: var(--text-muted); }
-table.matrix .cell-3 .rain { font-size: 11.5px; }
-table.matrix .cell-3 .rain.dry { color: #94a0b3; }
-table.matrix .cell-3 .rain.wet { color: #2563eb; font-weight: 600; }
-table.matrix td.green-bg { background: var(--green-bg); }
-table.matrix td.yellow-bg { background: var(--yellow-bg); }
-table.matrix td.red-bg { background: var(--red-bg); }
-table.matrix .ico.green { color: var(--green); }
-table.matrix .ico.yellow { color: var(--yellow); }
-table.matrix .ico.red { color: var(--red); }
-
-table.decision { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 12.5px; }
-table.decision th, table.decision td {
-  padding: 7px 8px; border-bottom: 1px solid var(--border); text-align: center;
-}
-table.decision th { background: var(--surface-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
-table.decision td.zname { text-align: left; font-weight: 600; min-width: 130px; }
-table.decision .pill {
-  display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 11.5px;
-}
-table.decision .pill.green { background: var(--green-bg); color: var(--green); }
-table.decision .pill.yellow { background: var(--yellow-bg); color: var(--yellow); }
-table.decision .pill.red { background: var(--red-bg); color: var(--red); }
-
-table.works { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 12.5px; }
-table.works th, table.works td { padding: 7px 8px; text-align: center; border-bottom: 1px solid var(--border); }
-table.works th { background: var(--surface-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
-table.works td.work-name { text-align: left; font-weight: 500; min-width: 230px; }
-
-ul.advice { list-style: none; padding: 0; margin: 0; }
-ul.advice li {
-  background: var(--surface-2); border-left: 3px solid var(--accent);
-  padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 13px;
-}
-.windguru-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px;
-}
-.wg-card {
-  display: block; padding: 10px 12px; background: var(--accent-light);
-  border-radius: 8px; text-decoration: none; color: var(--accent);
-  font-weight: 600; font-size: 13px; transition: transform 0.1s;
-}
-.wg-card:hover { transform: translateY(-1px); }
-.wg-card .wg-sub { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
-footer.foot {
-  margin-top: 18px; font-size: 11.5px; color: var(--text-muted); padding: 12px 4px; line-height: 1.6;
-}
-@media (max-width: 600px) {
-  body { font-size: 14px; }
-  .wrap { padding: 10px 8px 60px; }
-  header.top { padding: 14px; }
-  header.top h1 { font-size: 16.5px; }
-  .today-card { padding: 14px; gap: 12px; }
-  .semaforo { width: 54px; height: 54px; font-size: 22px; }
-  .section { padding: 12px; }
-}
+  :root {
+    color-scheme: light;
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --border: #e3e3df;
+    --text: #1a1a1a;
+    --text-muted: #6b7280;
+    --accent: #1d4d8c;
+    --accent-soft: #e8f0f9;
+    --green: #15803d;
+    --green-bg: #d1fae5;
+    --yellow: #b45309;
+    --yellow-bg: #fef3c7;
+    --red: #b91c1c;
+    --red-bg: #fee2e2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 15px; line-height: 1.5; -webkit-text-size-adjust: 100%; }
+  .container { max-width: 980px; margin: 0 auto; padding: 16px; padding-bottom: 60px; }
+  header.brief-head { padding: 14px 0; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }
+  header.brief-head h1 { font-size: 1.35rem; margin: 0 0 4px; color: var(--accent); font-weight: 700; letter-spacing: -0.01em; }
+  header.brief-head .sub { color: var(--text-muted); font-size: 0.85rem; }
+  .stale { background: #fef3c7; border: 1px solid #fbbf24; padding: 10px 12px; border-radius: 8px; margin: 10px 0; font-size: 0.88rem; color: #92400e; }
+  .today-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; box-shadow: var(--shadow); margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+  .semaphore { width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
+    background: #fef3c7; border: 3px solid #b45309; }
+  .today-text h2 { margin: 0 0 4px; font-size: 1.05rem; color: var(--accent); }
+  .today-text p { margin: 0; color: var(--text); font-weight: 500; }
+  h2.section { font-size: 1.05rem; margin: 24px 0 10px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; font-weight: 600; }
+  .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; box-shadow: var(--shadow); }
+  .chip h3 { margin: 0 0 8px; font-size: 0.92rem; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .chip .v-icon { font-size: 1.2rem; }
+  .chip .row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 2px 0; color: var(--text-muted); }
+  .chip .row b { color: var(--text); font-weight: 600; }
+  .matrix-wrapper { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.82rem; }
+  table.matrix th, table.matrix td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  table.matrix th { background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 0.78rem; position: sticky; top: 0; }
+  table.matrix th.day-col, table.matrix td.day-col { position: sticky; left: 0; background: var(--surface); text-align: left; padding-left: 10px; min-width: 100px; font-weight: 500; }
+  table.matrix th.day-col { background: var(--accent-soft); z-index: 2; }
+  table.matrix tr.today-row td { background: var(--accent-soft); }
+  table.matrix tr.today-row td.day-col { background: var(--accent-soft); font-weight: 700; color: var(--accent); }
+  .cell-stack { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.2; }
+  .cell-stack .v-icon { font-size: 1rem; font-weight: 700; }
+  .cell-stack .v-gust { font-size: 0.78rem; color: var(--text); }
+  .cell-stack .v-prec { font-size: 0.72rem; }
+  .v-prec.wet { color: #1e40af; font-weight: 600; }
+  .v-prec.dry { color: var(--text-muted); }
+  .cell-green .v-icon { color: var(--green); }
+  .cell-yellow .v-icon { color: var(--yellow); }
+  .cell-red .v-icon { color: var(--red); }
+  td.cell-green { background: var(--green-bg); }
+  td.cell-yellow { background: var(--yellow-bg); }
+  td.cell-red { background: var(--red-bg); }
+  table.decision { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.82rem; }
+  table.decision th, table.decision td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  table.decision th { background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 0.78rem; }
+  table.decision td.zone-name { text-align: left; padding-left: 10px; font-weight: 500; }
+  table.work-matrix { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 0.82rem; }
+  table.work-matrix th, table.work-matrix td { padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  table.work-matrix th { background: var(--accent-soft); color: var(--accent); font-size: 0.78rem; }
+  table.work-matrix td.task-name { text-align: left; padding-left: 10px; font-weight: 500; min-width: 200px; }
+  .advice { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px;
+    padding: 14px; margin: 6px 0; box-shadow: var(--shadow); font-size: 0.92rem; }
+  .advice + .advice { margin-top: 8px; }
+  .windguru-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .wg-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; text-align: center; box-shadow: var(--shadow); text-decoration: none; color: var(--text);
+    transition: transform 0.1s, border-color 0.1s; }
+  .wg-card:hover { transform: translateY(-1px); border-color: var(--accent); }
+  .wg-card .wg-zone { color: var(--accent); font-weight: 600; font-size: 0.88rem; }
+  .wg-card .wg-loc { color: var(--text-muted); font-size: 0.78rem; margin-top: 4px; }
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.78rem; line-height: 1.6; }
+  footer p { margin: 4px 0; }
+  @media (max-width: 600px) {
+    .container { padding: 12px; padding-bottom: 80px; }
+    header.brief-head h1 { font-size: 1.15rem; }
+    .today-card { padding: 14px; }
+    .semaphore { width: 60px; height: 60px; font-size: 1.9rem; border-width: 2px; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="container">
+  <header class="brief-head">
+    <h1>🌤 Briefing Tático Meteorológico — Electro Moisés</h1>
+    <div class="sub">Ilha Terceira · Domingo, 10 Mai · Atualizado 09:04 (hora Açores)</div>
+    <div class="sub" style="margin-top:4px;font-size:0.78rem;">Fonte: Open-Meteo (ECMWF + ICON + GFS) · IPMA · Yr.no</div>
+  </header>
 
-<header class="top">
-  <h1>🌤 Briefing Tático Meteorológico — Electro Moisés</h1>
-  <div class="meta">
-    Ilha Terceira · Açores · Atualizado 2026-05-09 05:43 (hora Açores) ·
-    Fontes: Open-Meteo (ECMWF + ICON + GFS) · IPMA · Yr.no
-  </div>
-</header>
+  <section class="today-card">
+    <div class="semaphore">🟡</div>
+    <div class="today-text">
+      <h2>Veredicto Hoje — Ilha Terceira</h2>
+      <p>Condições mistas — priorizar interior e adiar içamentos críticos por zona.</p>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-top:6px;">
+        Sul 🟡 · Norte 🟡 · Este 🟡 · Sudeste 🟡 · Oeste 🟡
+      </p>
+    </div>
+  </section>
 
-<div class="today-card">
-  <div class="semaforo yellow">⚠</div>
-  <div class="today-text">
-    <h2>Hoje · Sáb 09/05 · Veredicto da Ilha: 🟡 AMARELO</h2>
-    <p>Atenção. Trabalhos pesados/içamentos exteriores devem ser avaliados caso a caso.</p>
+  <h2 class="section">Resumo por Zona — Hoje</h2>
+  <div class="chips">
+    <div class="chip">
+      <h3><span class="v-icon" style="color:#b45309">⚠</span> Sul — Angra do Heroísmo</h3>
+      <div class="row"><span>Rajadas (média)</span><b>66 km/h</b></div>
+      <div class="row"><span>Rajadas (pior)</span><b>85 km/h</b></div>
+      <div class="row"><span>Vento médio</span><b>28 km/h</b></div>
+      <div class="row"><span>Chuva 07-17h</span><b>2.5 mm</b></div>
+      <div class="row"><span>Humidade</span><b>84%</b></div>
+      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+    </div>
+    <div class="chip">
+      <h3><span class="v-icon" style="color:#b45309">⚠</span> Norte — Biscoitos</h3>
+      <div class="row"><span>Rajadas (média)</span><b>57 km/h</b></div>
+      <div class="row"><span>Rajadas (pior)</span><b>69 km/h</b></div>
+      <div class="row"><span>Vento médio</span><b>29 km/h</b></div>
+      <div class="row"><span>Chuva 07-17h</span><b>3.2 mm</b></div>
+      <div class="row"><span>Humidade</span><b>84%</b></div>
+      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+    </div>
+    <div class="chip">
+      <h3><span class="v-icon" style="color:#b45309">⚠</span> Este — Praia da Vitória</h3>
+      <div class="row"><span>Rajadas (média)</span><b>66 km/h</b></div>
+      <div class="row"><span>Rajadas (pior)</span><b>85 km/h</b></div>
+      <div class="row"><span>Vento médio</span><b>30 km/h</b></div>
+      <div class="row"><span>Chuva 07-17h</span><b>2.2 mm</b></div>
+      <div class="row"><span>Humidade</span><b>82%</b></div>
+      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+    </div>
+    <div class="chip">
+      <h3><span class="v-icon" style="color:#b45309">⚠</span> Sudeste — Vila das Lajes</h3>
+      <div class="row"><span>Rajadas (média)</span><b>66 km/h</b></div>
+      <div class="row"><span>Rajadas (pior)</span><b>85 km/h</b></div>
+      <div class="row"><span>Vento médio</span><b>30 km/h</b></div>
+      <div class="row"><span>Chuva 07-17h</span><b>2.2 mm</b></div>
+      <div class="row"><span>Humidade</span><b>82%</b></div>
+      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+    </div>
+    <div class="chip">
+      <h3><span class="v-icon" style="color:#b45309">⚠</span> Oeste — Santa Bárbara</h3>
+      <div class="row"><span>Rajadas (média)</span><b>57 km/h</b></div>
+      <div class="row"><span>Rajadas (pior)</span><b>69 km/h</b></div>
+      <div class="row"><span>Vento médio</span><b>27 km/h</b></div>
+      <div class="row"><span>Chuva 07-17h</span><b>3.1 mm</b></div>
+      <div class="row"><span>Humidade</span><b>85%</b></div>
+      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+    </div>
   </div>
+
+  <h2 class="section">Matriz Semanal — 7 Dias × 5 Zonas</h2>
+  <div class="matrix-wrapper"><table class="matrix">
+    <thead><tr><th class="day-col">Dia</th><th>🏝 Ilha</th><th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th></tr></thead><tbody><tr class="today-row"><td class="day-col">Dom 10/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.5mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">57 km/h</span><span class="v-prec wet">3.2mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.2mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.2mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">57 km/h</span><span class="v-prec wet">3.1mm</span></div></td></tr><tr><td class="day-col">Seg 11/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">47 km/h</span><span class="v-prec wet">2.3mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">47 km/h</span><span class="v-prec wet">2.1mm</span></div></td></tr><tr><td class="day-col">Ter 12/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.2mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.4mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.6mm</span></div></td></tr><tr><td class="day-col">Qua 13/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">35 km/h</span><span class="v-prec wet">1.9mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">34 km/h</span><span class="v-prec wet">2.0mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">35 km/h</span><span class="v-prec wet">2.0mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">35 km/h</span><span class="v-prec wet">2.0mm</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">34 km/h</span><span class="v-prec wet">2.0mm</span></div></td></tr><tr><td class="day-col">Qui 14/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.9mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">26 km/h</span><span class="v-prec wet">0.9mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.8mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.8mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">26 km/h</span><span class="v-prec wet">0.9mm</span></div></td></tr><tr><td class="day-col">Sex 15/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">29 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">29 km/h</span><span class="v-prec wet">0.1mm</span></div></td></tr><tr><td class="day-col">Sáb 16/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">39 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">39 km/h</span><span class="v-prec dry">0.0mm</span></div></td></tr></tbody></table></div>
+
+  <h2 class="section">Tabela de Decisão — Hoje por Zona</h2>
+  <div class="matrix-wrapper"><table class="decision">
+    <thead><tr>
+      <th>Zona</th><th>Raj. (méd)</th><th>Raj. (pior)</th><th>Vento</th>
+      <th>Chuva 07-17h</th><th>Humidade</th>
+      <th>Manhã 07-13h</th><th>Tarde 14-17h</th><th>Veredicto</th>
+    </tr></thead><tbody><tr>
+      <td class="zone-name">Sul — Angra do Heroísmo</td>
+      <td class="cell-yellow">66</td>
+      <td>85</td>
+      <td class="cell-yellow">28</td>
+      <td class="cell-yellow">2.5 mm</td>
+      <td class="cell-yellow">84%</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow"><b>🟡</b></td>
+    </tr><tr>
+      <td class="zone-name">Norte — Biscoitos</td>
+      <td class="cell-yellow">57</td>
+      <td>69</td>
+      <td class="cell-yellow">29</td>
+      <td class="cell-yellow">3.2 mm</td>
+      <td class="cell-yellow">84%</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow"><b>🟡</b></td>
+    </tr><tr>
+      <td class="zone-name">Este — Praia da Vitória</td>
+      <td class="cell-yellow">66</td>
+      <td>85</td>
+      <td class="cell-yellow">30</td>
+      <td class="cell-yellow">2.2 mm</td>
+      <td class="cell-yellow">82%</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow"><b>🟡</b></td>
+    </tr><tr>
+      <td class="zone-name">Sudeste — Vila das Lajes</td>
+      <td class="cell-yellow">66</td>
+      <td>85</td>
+      <td class="cell-yellow">30</td>
+      <td class="cell-yellow">2.2 mm</td>
+      <td class="cell-yellow">82%</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow"><b>🟡</b></td>
+    </tr><tr>
+      <td class="zone-name">Oeste — Santa Bárbara</td>
+      <td class="cell-yellow">57</td>
+      <td>69</td>
+      <td class="cell-yellow">27</td>
+      <td class="cell-yellow">3.1 mm</td>
+      <td class="cell-yellow">85%</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow">🟡</td>
+      <td class="cell-yellow"><b>🟡</b></td>
+    </tr></tbody></table></div>
+
+  <h2 class="section">Matriz de Trabalhos — Hoje por Zona</h2>
+  <div class="matrix-wrapper"><table class="work-matrix">
+    <thead><tr><th>Tipo de Trabalho</th><th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th></tr></thead><tbody><tr><td class="task-name">Içamento UE (split/multi)</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td></tr><tr><td class="task-name">Içamento monobloco / B. Calor</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td></tr><tr><td class="task-name">Trabalho em telhado/cobertura</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td></tr><tr><td class="task-name">Condutas exteriores</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Vácuos refrigeração (ext.)</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td></tr><tr><td class="task-name">Carga fluido frigorigéneo</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Extração industrial (cond.)</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Fachada / caixas elétricas</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td></tr><tr><td class="task-name">Trabalho interior</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td></tr></tbody></table></div>
+
+  <h2 class="section">Conselhos Estratégicos</h2>
+  <div class="advice"><strong>Melhor janela:</strong> Terça, 12 Mai — 5/5 zonas em verde. Reservar para içamentos e trabalhos críticos em altura.</div>
+  <div class="advice"><strong>Vento elevado hoje:</strong> rajadas médias até 66 km/h. Adiar todos os içamentos pesados e trabalhos em altura sem proteção.</div>
+
+  <h2 class="section">Windguru — Verificação Marítima</h2>
+  <div class="windguru-grid">
+    <a class="wg-card" href="https://www.windguru.cz/88976" target="_blank" rel="noopener">
+      <div class="wg-zone">Sul</div>
+      <div class="wg-loc">Angra Heroísmo ↗</div>
+    </a>
+    <a class="wg-card" href="https://www.windguru.cz/35922" target="_blank" rel="noopener">
+      <div class="wg-zone">Norte</div>
+      <div class="wg-loc">Biscoitos ↗</div>
+    </a>
+    <a class="wg-card" href="https://www.windguru.cz/35923" target="_blank" rel="noopener">
+      <div class="wg-zone">Este</div>
+      <div class="wg-loc">Praia Vitória ↗</div>
+    </a>
+    <a class="wg-card" href="https://www.windguru.cz/895975" target="_blank" rel="noopener">
+      <div class="wg-zone">Sudeste</div>
+      <div class="wg-loc">Vila das Lajes ↗</div>
+    </a>
+    <a class="wg-card" href="https://www.windguru.cz/14904" target="_blank" rel="noopener">
+      <div class="wg-zone">Oeste</div>
+      <div class="wg-loc">Santa Bárbara ↗</div>
+    </a>
+    <a class="wg-card" href="https://www.windguru.cz/32852" target="_blank" rel="noopener">
+      <div class="wg-zone">Oeste</div>
+      <div class="wg-loc">Sta. Bárbara 2 ↗</div>
+    </a>
+  </div>
+
+  <footer>
+    <p><strong>Metodologia:</strong> consenso de modelos ECMWF IFS 0.25°, ICON Seamless e GFS Seamless via Open-Meteo. Critério de decisão usa MÉDIA das rajadas máximas dos modelos (não o pior caso). Janelas de trabalho: manhã 07h-13h e tarde 14h-17h (hora Açores, UTC-1).</p>
+    <p><strong>Fontes:</strong> Open-Meteo · IPMA (1110600 Angra) · Yr.no/MET Norway · Windguru.</p>
+    <p><strong>Limiares operacionais:</strong> Vento 🟢 ≤50km/h · 🟡 51-75 · 🔴 >75 km/h (rajadas méd) · Chuva 🟢 ≤2mm · 🟡 2-8 · 🔴 >8 mm (acumulado janela) · Humidade 🟢 ≤82% · 🟡 83-90% · 🔴 >90%.</p>
+    <p style="margin-top:8px;">Briefing gerado autonomamente · 2026-05-10 09:04 Açores · Electro Moisés · Ilha Terceira.</p>
+  </footer>
 </div>
-
-<div class="section"><h3>Resumo por Zona — Hoje</h3><div class="zone-chips">
-<div class="chip yellow">
-      <div class="zname">Sul — Angra</div>
-      <div class="stats">
-        <span>Rajadas:</span><b>65 km/h</b>
-        <span>Pior caso:</span><b>80 km/h</b>
-        <span>Vento méd:</span><b>32 km/h</b>
-        <span>Chuva 07-17h:</span><b>1.6 mm</b>
-        <span>Humidade:</span><b>70%</b>
-        <span>Fator:</span><b>Vento</b>
-      </div>
-      <span class="verdict-pill">🟡 AMARELO</span>
-    </div>
-<div class="chip yellow">
-      <div class="zname">Norte — Biscoitos</div>
-      <div class="stats">
-        <span>Rajadas:</span><b>65 km/h</b>
-        <span>Pior caso:</span><b>81 km/h</b>
-        <span>Vento méd:</span><b>32 km/h</b>
-        <span>Chuva 07-17h:</span><b>2.3 mm</b>
-        <span>Humidade:</span><b>71%</b>
-        <span>Fator:</span><b>Vento</b>
-      </div>
-      <span class="verdict-pill">🟡 AMARELO</span>
-    </div>
-<div class="chip yellow">
-      <div class="zname">Este — Praia</div>
-      <div class="stats">
-        <span>Rajadas:</span><b>65 km/h</b>
-        <span>Pior caso:</span><b>80 km/h</b>
-        <span>Vento méd:</span><b>35 km/h</b>
-        <span>Chuva 07-17h:</span><b>1.5 mm</b>
-        <span>Humidade:</span><b>69%</b>
-        <span>Fator:</span><b>Vento</b>
-      </div>
-      <span class="verdict-pill">🟡 AMARELO</span>
-    </div>
-<div class="chip yellow">
-      <div class="zname">Sudeste — Lajes</div>
-      <div class="stats">
-        <span>Rajadas:</span><b>65 km/h</b>
-        <span>Pior caso:</span><b>80 km/h</b>
-        <span>Vento méd:</span><b>35 km/h</b>
-        <span>Chuva 07-17h:</span><b>1.5 mm</b>
-        <span>Humidade:</span><b>69%</b>
-        <span>Fator:</span><b>Vento</b>
-      </div>
-      <span class="verdict-pill">🟡 AMARELO</span>
-    </div>
-<div class="chip yellow">
-      <div class="zname">Oeste — Sta. Bárbara</div>
-      <div class="stats">
-        <span>Rajadas:</span><b>65 km/h</b>
-        <span>Pior caso:</span><b>81 km/h</b>
-        <span>Vento méd:</span><b>31 km/h</b>
-        <span>Chuva 07-17h:</span><b>1.9 mm</b>
-        <span>Humidade:</span><b>72%</b>
-        <span>Fator:</span><b>Vento</b>
-      </div>
-      <span class="verdict-pill">🟡 AMARELO</span>
-    </div>
-</div></div>
-<div class="section"><h3>Matriz Semanal — 7 Dias × 5 Zonas</h3><div class="tbl-scroll"><table class="matrix">
-<thead><tr><th class="day-col">Dia</th><th>🏝 Ilha</th>
-<th>Sul</th>
-<th>Norte</th>
-<th>Este</th>
-<th>Sudeste</th>
-<th>Oeste</th>
-</tr></thead><tbody>
-<tr class="today-row"><td class="day-col">Sáb 09/05</td>
-<td class="cell-3 yellow-bg"><div class="ico yellow">⚠</div></td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">65 km/h</div>
-          <div class="rain wet">1.6mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">65 km/h</div>
-          <div class="rain wet">2.3mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">65 km/h</div>
-          <div class="rain wet">1.5mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">65 km/h</div>
-          <div class="rain wet">1.5mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">65 km/h</div>
-          <div class="rain wet">1.9mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Dom 10/05</td>
-<td class="cell-3 yellow-bg"><div class="ico yellow">⚠</div></td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">67 km/h</div>
-          <div class="rain wet">2.5mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">57 km/h</div>
-          <div class="rain wet">3.0mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">67 km/h</div>
-          <div class="rain wet">2.2mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">67 km/h</div>
-          <div class="rain wet">2.2mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">57 km/h</div>
-          <div class="rain wet">2.9mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Seg 11/05</td>
-<td class="cell-3 yellow-bg"><div class="ico yellow">⚠</div></td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">47 km/h</div>
-          <div class="rain wet">2.2mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">46 km/h</div>
-          <div class="rain wet">2.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">47 km/h</div>
-          <div class="rain wet">2.0mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">47 km/h</div>
-          <div class="rain wet">2.0mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">46 km/h</div>
-          <div class="rain wet">1.9mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Ter 12/05</td>
-<td class="cell-3 green-bg"><div class="ico green">✓</div></td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">28 km/h</div>
-          <div class="rain wet">1.4mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">26 km/h</div>
-          <div class="rain wet">1.6mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">28 km/h</div>
-          <div class="rain wet">1.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">28 km/h</div>
-          <div class="rain wet">1.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">26 km/h</div>
-          <div class="rain wet">1.7mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Qua 13/05</td>
-<td class="cell-3 yellow-bg"><div class="ico yellow">⚠</div></td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">30 km/h</div>
-          <div class="rain wet">1.9mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">27 km/h</div>
-          <div class="rain wet">2.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">30 km/h</div>
-          <div class="rain wet">1.8mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">30 km/h</div>
-          <div class="rain wet">1.8mm</div>
-        </td>
-<td class="cell-3 yellow-bg">
-          <div class="ico yellow">⚠</div>
-          <div class="gust">27 km/h</div>
-          <div class="rain wet">2.1mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Qui 14/05</td>
-<td class="cell-3 green-bg"><div class="ico green">✓</div></td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">31 km/h</div>
-          <div class="rain wet">0.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">29 km/h</div>
-          <div class="rain wet">0.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">31 km/h</div>
-          <div class="rain wet">0.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">31 km/h</div>
-          <div class="rain wet">0.1mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">29 km/h</div>
-          <div class="rain wet">0.1mm</div>
-        </td>
-</tr>
-<tr><td class="day-col">Sex 15/05</td>
-<td class="cell-3 green-bg"><div class="ico green">✓</div></td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">27 km/h</div>
-          <div class="rain wet">0.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">24 km/h</div>
-          <div class="rain wet">0.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">27 km/h</div>
-          <div class="rain wet">0.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">27 km/h</div>
-          <div class="rain wet">0.2mm</div>
-        </td>
-<td class="cell-3 green-bg">
-          <div class="ico green">✓</div>
-          <div class="gust">24 km/h</div>
-          <div class="rain wet">0.2mm</div>
-        </td>
-</tr>
-</tbody></table></div></div>
-<div class="section"><h3>Decisão Operacional — Hoje, por Zona</h3><div class="tbl-scroll"><table class="decision">
-<thead><tr>
-  <th>Zona</th><th>Raj. méd</th><th>Raj. pior</th><th>Vento</th>
-  <th>Chuva dia</th><th>Humid.</th><th>Manhã 07-13h</th><th>Tarde 14-17h</th><th>Veredicto</th>
-</tr></thead><tbody>
-<tr>
-      <td class="zname">Sul — Angra</td>
-      <td>65 km/h</td>
-      <td>80 km/h</td>
-      <td><span class="pill yellow">32 km/h</span></td>
-      <td><span class="pill green">1.6 mm</span></td>
-      <td><span class="pill green">70%</span></td>
-      <td><span class="pill green">0.5 mm</span></td>
-      <td><span class="pill green">1.1 mm</span></td>
-      <td><span class="pill yellow">🟡 AMARELO</span></td>
-    </tr>
-<tr>
-      <td class="zname">Norte — Biscoitos</td>
-      <td>65 km/h</td>
-      <td>81 km/h</td>
-      <td><span class="pill yellow">32 km/h</span></td>
-      <td><span class="pill yellow">2.3 mm</span></td>
-      <td><span class="pill green">71%</span></td>
-      <td><span class="pill green">0.8 mm</span></td>
-      <td><span class="pill green">1.5 mm</span></td>
-      <td><span class="pill yellow">🟡 AMARELO</span></td>
-    </tr>
-<tr>
-      <td class="zname">Este — Praia</td>
-      <td>65 km/h</td>
-      <td>80 km/h</td>
-      <td><span class="pill yellow">35 km/h</span></td>
-      <td><span class="pill green">1.5 mm</span></td>
-      <td><span class="pill green">69%</span></td>
-      <td><span class="pill green">0.4 mm</span></td>
-      <td><span class="pill green">1.1 mm</span></td>
-      <td><span class="pill yellow">🟡 AMARELO</span></td>
-    </tr>
-<tr>
-      <td class="zname">Sudeste — Lajes</td>
-      <td>65 km/h</td>
-      <td>80 km/h</td>
-      <td><span class="pill yellow">35 km/h</span></td>
-      <td><span class="pill green">1.5 mm</span></td>
-      <td><span class="pill green">69%</span></td>
-      <td><span class="pill green">0.4 mm</span></td>
-      <td><span class="pill green">1.1 mm</span></td>
-      <td><span class="pill yellow">🟡 AMARELO</span></td>
-    </tr>
-<tr>
-      <td class="zname">Oeste — Sta. Bárbara</td>
-      <td>65 km/h</td>
-      <td>81 km/h</td>
-      <td><span class="pill yellow">31 km/h</span></td>
-      <td><span class="pill green">1.9 mm</span></td>
-      <td><span class="pill green">72%</span></td>
-      <td><span class="pill green">0.7 mm</span></td>
-      <td><span class="pill green">1.2 mm</span></td>
-      <td><span class="pill yellow">🟡 AMARELO</span></td>
-    </tr>
-</tbody></table></div></div>
-<div class="section"><h3>Matriz de Trabalhos — Hoje, por Zona</h3><div class="tbl-scroll"><table class="works">
-<thead><tr><th>Trabalho</th>
-<th>Sul</th>
-<th>Norte</th>
-<th>Este</th>
-<th>Sudeste</th>
-<th>Oeste</th>
-</tr></thead><tbody>
-<tr><td class="work-name">Içamento UE (split/multisplit)</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-</tr>
-<tr><td class="work-name">Içamento monobloco/bomba calor pesado</td>
-<td class="yellow-bg">🚫</td>
-<td class="yellow-bg">🚫</td>
-<td class="yellow-bg">🚫</td>
-<td class="yellow-bg">🚫</td>
-<td class="yellow-bg">🚫</td>
-</tr>
-<tr><td class="work-name">Instalação em telhado/cobertura</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-</tr>
-<tr><td class="work-name">Passagem de condutas exteriores</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-</tr>
-<tr><td class="work-name">Vácuos de refrigeração (exterior)</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-</tr>
-<tr><td class="work-name">Carga de fluido frigorigéneo</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-</tr>
-<tr><td class="work-name">Extração industrial (condutas teto)</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-</tr>
-<tr><td class="work-name">Trabalhos em fachada (caixas elét.)</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-<td class="yellow-bg">⚠️</td>
-</tr>
-<tr><td class="work-name">Todo o trabalho interior</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-<td class="yellow-bg">✅</td>
-</tr>
-</tbody></table></div></div>
-<div class="section"><h3>Conselhos Estratégicos</h3><ul class="advice">
-<li><b>Janela óptima da semana:</b> Ter 12/05 apresenta-se como o melhor dia para trabalhos exteriores pesados (içamentos, instalação em telhado) — 5/5 zonas verdes. Concentrar a programação de obras críticas neste dia.</li>
-<li><b>Vento é o fator dominante hoje:</b> rajadas piores até <b>81 km/h</b>. Reservar a manhã para trabalhos em fachada e condutas exteriores mais leves; içamentos pesados e monobloco devem ser adiados para janela mais calma (recomendação: Ter 12/05).</li>
-<li><b>Transição favorável:</b> a partir de <b>Seg 11/05</b> as condições melhoram significativamente. Planejar trabalhos exteriores adiados desta semana para essa janela.</li>
-</ul></div>
-<div class="section"><h3>Windguru — Verificação Operacional</h3><div class="windguru-grid">
-<a class="wg-card" href="https://www.windguru.cz/88976" target="_blank" rel="noopener noreferrer">Sul / Angra<span class="wg-sub">windguru.cz ↗</span></a>
-<a class="wg-card" href="https://www.windguru.cz/35922" target="_blank" rel="noopener noreferrer">Biscoitos<span class="wg-sub">windguru.cz ↗</span></a>
-<a class="wg-card" href="https://www.windguru.cz/35923" target="_blank" rel="noopener noreferrer">Praia da Vitória<span class="wg-sub">windguru.cz ↗</span></a>
-<a class="wg-card" href="https://www.windguru.cz/895975" target="_blank" rel="noopener noreferrer">Vila das Lajes<span class="wg-sub">windguru.cz ↗</span></a>
-<a class="wg-card" href="https://www.windguru.cz/14904" target="_blank" rel="noopener noreferrer">Sta. Bárbara A<span class="wg-sub">windguru.cz ↗</span></a>
-<a class="wg-card" href="https://www.windguru.cz/32852" target="_blank" rel="noopener noreferrer">Sta. Bárbara B<span class="wg-sub">windguru.cz ↗</span></a>
-</div></div>
-<footer class="foot">
-  <strong>Metodologia.</strong> Consenso de 3 modelos numéricos para vento, rajadas, precipitação e humidade — média dos máximos por modelo (rajadas), médias horárias na janela operacional 07h–17h (Atlantic/Azores). Critério de decisão usa a MÉDIA das rajadas; o MÁXIMO absoluto é mostrado apenas como pior caso, para evitar falsos alarmes. Validação cruzada com IPMA (boletim diário) e Yr.no (Norwegian Met).<br>
-  <strong>Limites operacionais.</strong> Vento — verde ≤50 km/h rajada e ≤30 km/h méd. · Chuva por janela — verde ≤2mm. · Humidade — verde ≤82%. Veredicto = critério mais restritivo.<br>
-  Gerado automaticamente a 2026-05-09 05:43. © Electro Moisés · Ilha Terceira.
-</footer>
-</div></body></html>
+</body>
+</html>
