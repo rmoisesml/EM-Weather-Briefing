@@ -1,323 +1,332 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EM Briefing v2 · 2026-05-11</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="EM Briefing">
 <meta name="theme-color" content="#1d4d8c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
-<title>Briefing Tático Meteo · Electro Moisés · 10/05/2026</title>
 <style>
   :root {
-    color-scheme: light;
-    --bg: #f7f7f5;
-    --surface: #ffffff;
-    --border: #e3e3df;
-    --text: #1a1a1a;
-    --text-muted: #6b7280;
-    --accent: #1d4d8c;
-    --accent-soft: #e8f0f9;
-    --green: #15803d; --green-bg: #d1fae5;
-    --yellow: #b45309; --yellow-bg: #fef3c7;
-    --red: #b91c1c;   --red-bg: #fee2e2;
-    --shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --bg:#f7f7f5; --card:#fff; --ink:#1a1a1a; --muted:#5f6671;
+    --brand:#1d4d8c; --hair:#e3e3e0;
   }
   * { box-sizing: border-box; }
-  html, body { margin:0; padding:0; background: var(--bg); color: var(--text);
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; font-size:15px; line-height:1.5; -webkit-text-size-adjust:100%; }
-  .container { max-width: 980px; margin: 0 auto; padding: 16px 16px 60px; }
-  header.brief-head { padding: 14px 0; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }
-  header.brief-head h1 { font-size: 1.35rem; margin: 0 0 4px; color: var(--accent); font-weight: 700; }
-  header.brief-head .sub { color: var(--text-muted); font-size: 0.85rem; }
-  .stale { background: #fef3c7; border:1px solid #fbbf24; padding:10px 12px; border-radius:8px; margin:10px 0; font-size:0.88rem; color:#92400e; }
-  .today-card { background: var(--surface); border:1px solid var(--border); border-radius:12px;
-    padding:18px; box-shadow: var(--shadow); margin-bottom:16px; display:flex; align-items:center; gap:16px; }
-  .semaphore { width:76px; height:76px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:2.4rem;
-    background: #fef3c7; border:3px solid #b45309; }
-  .today-text h2 { margin:0 0 4px; font-size:1.05rem; color: var(--accent); }
-  .today-text p { margin:0; font-weight:500; }
-  h2.section { font-size:1.05rem; margin:24px 0 10px; color:var(--accent); border-bottom:1px solid var(--border); padding-bottom:6px; font-weight:600; }
-
-  /* Zone chips */
-  .chips { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px; }
-  .chip { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; box-shadow:var(--shadow); }
-  .chip h3 { margin:0 0 8px; font-size:0.92rem; color:var(--accent); display:flex; align-items:center; gap:6px; }
-  .chip .v-icon { font-size:1.2rem; }
-  .chip .row { display:flex; justify-content:space-between; font-size:0.82rem; padding:1px 0; color:var(--text-muted); }
-  .chip .row b { color: var(--text); font-weight:600; }
-  .badges { display:flex; gap:6px; margin:6px 0 8px; flex-wrap:wrap; }
-  .badge { font-size:0.72rem; padding:2px 8px; border-radius:10px; font-weight:600; }
-  .badge-conf-high { background:#e8f0f9; color:#1d4d8c; }
-  .badge-conf-low  { background:#fef3c7; color:#92400e; }
-
-  /* Hourly strip */
-  .hstrip { display:grid; grid-template-columns:repeat(11, 1fr); gap:2px; margin:8px 0 6px; padding:6px; background:#f9fafb; border-radius:6px; }
-  .hstrip-cell { display:flex; flex-direction:column; align-items:center; min-height:50px; justify-content:flex-end; }
-  .hstrip-bar { width:80%; min-height:2px; border-radius:1px 1px 0 0; }
-  .hstrip-prec { width:80%; height:5px; margin-top:1px; border-radius:0 0 1px 1px; }
-  .hstrip-hour { font-size:0.6rem; color: var(--text-muted); margin-top:2px; }
-  .hstrip-legend { font-size:0.68rem; color:var(--text-muted); margin-top:4px; text-align:center; }
-
-  /* Matrix */
-  .matrix-wrapper { overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); }
-  table.matrix { border-collapse:collapse; width:100%; min-width:680px; font-size:0.82rem; }
-  table.matrix th, table.matrix td { padding:8px 6px; text-align:center; border-bottom:1px solid var(--border); }
-  table.matrix th { background:var(--accent-soft); color:var(--accent); font-weight:600; font-size:0.78rem; position:sticky; top:0; }
-  table.matrix th.day-col, table.matrix td.day-col { position:sticky; left:0; background:var(--surface); text-align:left; padding-left:10px; min-width:100px; font-weight:500; }
-  table.matrix th.day-col { background:var(--accent-soft); z-index:2; }
-  table.matrix tr.today-row td { background:var(--accent-soft); }
-  table.matrix tr.today-row td.day-col { background:var(--accent-soft); font-weight:700; color:var(--accent); }
-  .cell-stack { display:flex; flex-direction:column; align-items:center; gap:1px; line-height:1.2; }
-  .cell-stack .v-icon { font-size:1rem; font-weight:700; }
-  .cell-stack .v-gust { font-size:0.78rem; color:var(--text); }
-  .cell-stack .v-prec { font-size:0.72rem; }
-  .cell-stack .v-hours { font-size:0.68rem; color:#1e40af; font-weight:600; }
-  .cell-stack .conf-mark { font-size:0.68rem; color:#92400e; font-weight:700; }
-  .v-prec.wet { color:#1e40af; font-weight:600; } .v-prec.dry { color:var(--text-muted); }
-  .cell-green .v-icon { color:var(--green); }
-  .cell-yellow .v-icon { color:var(--yellow); }
-  .cell-red .v-icon { color:var(--red); }
-  td.cell-green { background:var(--green-bg); }
-  td.cell-yellow { background:var(--yellow-bg); }
-  td.cell-red { background:var(--red-bg); }
-
-  table.decision { width:100%; min-width:780px; border-collapse:collapse; font-size:0.82rem; }
-  table.decision th, table.decision td { padding:8px 6px; text-align:center; border-bottom:1px solid var(--border); }
-  table.decision th { background:var(--accent-soft); color:var(--accent); font-weight:600; font-size:0.78rem; }
-  table.decision td.zone-name { text-align:left; padding-left:10px; font-weight:500; }
-  table.work-matrix { width:100%; min-width:720px; border-collapse:collapse; font-size:0.82rem; }
-  table.work-matrix th, table.work-matrix td { padding:8px 6px; text-align:center; border-bottom:1px solid var(--border); }
-  table.work-matrix th { background:var(--accent-soft); color:var(--accent); font-size:0.78rem; }
-  table.work-matrix td.task-name { text-align:left; padding-left:10px; font-weight:500; min-width:200px; }
-
-  .advice { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:14px; margin:6px 0; box-shadow:var(--shadow); font-size:0.92rem; }
-
-  .skill-panel { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow); }
-  .skill-empty { color:var(--text-muted); font-style:italic; font-size:0.88rem; }
-  table.skill { width:100%; min-width:560px; border-collapse:collapse; font-size:0.8rem; }
-  table.skill th, table.skill td { padding:6px 6px; text-align:center; border-bottom:1px solid var(--border); }
-  table.skill th { background:var(--accent-soft); color:var(--accent); font-size:0.74rem; }
-  table.skill td.zname { text-align:left; font-weight:500; padding-left:10px; }
-  .bias-CERTO { color:var(--green); font-weight:600; }
-  .bias-OTIMISTA, .bias-SECO { color:var(--yellow); font-weight:600; }
-  .bias-PESSIMISTA, .bias-HÚMIDO { color:#1e40af; font-weight:600; }
-
-  .windguru-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px; }
-  .wg-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center; box-shadow:var(--shadow); text-decoration:none; color:var(--text); }
-  .wg-card .wg-zone { color:var(--accent); font-weight:600; font-size:0.88rem; }
-  .wg-card .wg-loc { color:var(--text-muted); font-size:0.78rem; margin-top:4px; }
-
-  footer { margin-top:32px; padding-top:16px; border-top:1px solid var(--border); color:var(--text-muted); font-size:0.78rem; line-height:1.6; }
-  footer p { margin:4px 0; }
-
-  @media (max-width: 600px) {
-    .container { padding:12px 12px 80px; }
-    header.brief-head h1 { font-size:1.15rem; }
-    .today-card { padding:14px; }
-    .semaphore { width:60px; height:60px; font-size:1.9rem; border-width:2px; }
-    .chips { grid-template-columns: 1fr; }
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         margin:0; background:var(--bg); color:var(--ink); padding-bottom: env(safe-area-inset-bottom, 0); }
+  header { background:var(--brand); color:#fff; padding:14px 16px; }
+  header h1 { margin:0; font-size:18px; font-weight:700; letter-spacing:-0.2px; }
+  header .sub { font-size:12px; opacity:0.9; margin-top:3px; }
+  main { padding:14px 12px 24px; max-width:780px; margin:0 auto; }
+  section { background:var(--card); border-radius:14px; padding:14px 14px; margin-bottom:14px; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+  section h2 { margin:0 0 10px; font-size:14px; color:var(--brand); text-transform:uppercase; letter-spacing:0.5px; }
+  .today-card { display:flex; align-items:center; gap:14px; }
+  .sema { width:84px; height:84px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:46px;
+           background:#e6a700; box-shadow:0 4px 14px #e6a70040; color:#fff; font-weight:800;}
+  .today-text { flex:1; }
+  .today-text .vph { font-size:15px; font-weight:600; }
+  .today-text .vsub { font-size:12px; color:var(--muted); margin-top:4px; }
+  .zones { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:520px) { .zones { grid-template-columns:1fr; } }
+  .zone-card { background:#fcfcfb; border:1px solid var(--hair); border-radius:10px; padding:10px 12px; }
+  .zone-head { display:flex; justify-content:space-between; align-items:center; }
+  .zone-name { font-weight:700; font-size:13px; }
+  .zone-verdict { font-size:20px; }
+  .badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .badge { display:inline-block; font-size:10.5px; padding:2px 7px; border-radius:999px; font-weight:600; }
+  .bandwrap { margin-top:8px; }
+  .bandlabels { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); }
+  .band { display:flex; align-items:flex-end; gap:2px; height:46px; padding:2px 0; border-bottom:1px solid var(--hair); }
+  .band .bar { flex:1; min-width:5px; border-radius:2px 2px 0 0; }
+  .metrics { margin-top:8px; font-size:12px; line-height:1.55; color:#222; }
+  .metrics b { color:var(--muted); font-weight:500; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th, td { padding:7px 6px; border-bottom:1px solid var(--hair); text-align:center; }
+  th { background:#fafaf7; color:var(--brand); font-weight:600; font-size:11.5px; }
+  td:first-child, th:first-child { text-align:left; }
+  .wtable td { font-weight:600; }
+  .wtable small { font-weight:400; color:var(--muted); }
+  .dtable .rbadge, .vtable td span { display:inline-block; font-size:11px; padding:1px 6px; border-radius:6px; font-weight:600; }
+  .ktable td { font-size:12px; }
+  .ktable td:first-child { font-weight:500; }
+  .note { font-size:13px; color:var(--muted); padding:8px; background:#fafaf7; border-radius:8px; }
+  .advice { margin:0; padding-left:18px; font-size:13px; line-height:1.65; }
+  .advice li { margin-bottom:4px; }
+  .wgcards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  @media (max-width:480px) { .wgcards { grid-template-columns:1fr; } }
+  .wgcard { display:block; text-decoration:none; background:#eef5ff; padding:10px; border-radius:10px; color:var(--brand); }
+  .wgname { font-weight:700; font-size:13px; }
+  .wgsub { font-size:11px; color:var(--muted); }
+  footer { text-align:center; font-size:11px; color:var(--muted); padding:14px 12px 30px; line-height:1.6; }
+  .banner { background:#fff5e0; border-left:5px solid #e6a700; padding:10px 12px; border-radius:8px; font-size:13px; margin-bottom:12px; }
+  .scroll-x { overflow-x:auto; -webkit-overflow-scrolling:touch; }
 </style>
 </head>
 <body>
-<div class="container">
-  <header class="brief-head">
-    <h1>🌤 Briefing Tático Meteorológico — Electro Moisés</h1>
-    <div class="sub">Ilha Terceira · Domingo, 10 Mai · Atualizado 18:25 (hora Açores)</div>
-    <div class="sub" style="margin-top:4px;font-size:0.78rem;">v2 · Open-Meteo (ECMWF + ICON + GFS) · IPMA · Yr.no</div>
-  </header>
+<header>
+  <h1>🛠 Briefing Tático — Electro Moisés</h1>
+  <div class="sub">Ilha Terceira · 2026-05-11 05:49 (Açores) · v2</div>
+</header>
+<main>
 
-  <section class="today-card">
-    <div class="semaphore">🟡</div>
+
+<section>
+  <h2>Veredicto Global · Hoje</h2>
+  <div class="today-card">
+    <div class="sema">!</div>
     <div class="today-text">
-      <h2>Veredicto Hoje — Ilha Terceira</h2>
-      <p>Condições mistas — priorizar interior e adiar içamentos críticos por zona.</p>
-      <p style="font-size:0.82rem;color:var(--text-muted);margin-top:6px;">
-        Sul 🟡 · Norte 🟡 · Este 🟡 · Sudeste 🟡 · Oeste 🟡
-      </p>
-    </div>
-  </section>
-
-  <h2 class="section">Resumo por Zona — Hoje (com faixa horária 07-17h)</h2>
-  <div class="chips">
-    <div class="chip">
-      <h3><span class="v-icon" style="color:#b45309">⚠</span> Sul — Angra do Heroísmo</h3>
-      <div class="badges">
-        <span class="badge" style="background:#fef3c7;color:#b45309">Regime: Aguaceiros</span>
-        <span class="badge badge-conf-high">Alta confiança (±20 km/h)</span>
-      </div>
-      <div class="hstrip"><div class="hstrip-cell" title="07h · 55 km/h · 0.1 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">7</div></div><div class="hstrip-cell" title="08h · 57 km/h · 0.1 mm"><div class="hstrip-bar" style="height:57%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">8</div></div><div class="hstrip-cell" title="09h · 60 km/h · 0.1 mm"><div class="hstrip-bar" style="height:60%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">9</div></div><div class="hstrip-cell" title="10h · 65 km/h · 0.2 mm"><div class="hstrip-bar" style="height:65%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">10</div></div><div class="hstrip-cell" title="11h · 63 km/h · 0.3 mm"><div class="hstrip-bar" style="height:63%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">11</div></div><div class="hstrip-cell" title="12h · 62 km/h · 0.3 mm"><div class="hstrip-bar" style="height:62%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">12</div></div><div class="hstrip-cell" title="13h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">13</div></div><div class="hstrip-cell" title="14h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">14</div></div><div class="hstrip-cell" title="15h · 51 km/h · 0.2 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">15</div></div><div class="hstrip-cell" title="16h · 51 km/h · 0.4 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">16</div></div><div class="hstrip-cell" title="17h · 47 km/h · 0.3 mm"><div class="hstrip-bar" style="height:47%; background:#84cc16"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">17</div></div></div>
-      <div class="hstrip-legend">07h ··········· 12h ··········· 17h · barra=rajada · base=chuva</div>
-      <div class="row"><span>Rajadas</span><b>66 km/h (méd) · 85 km/h (pior)</b></div>
-      <div class="row"><span>Vento médio</span><b>28 km/h</b></div>
-      <div class="row"><span>Chuva 07-17h</span><b>2.5 mm · 4h com chuva · pico 0.4 mm/h</b></div>
-      <div class="row"><span>Humidade</span><b>84%</b></div>
-      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
-    </div>
-    <div class="chip">
-      <h3><span class="v-icon" style="color:#b45309">⚠</span> Norte — Biscoitos</h3>
-      <div class="badges">
-        <span class="badge" style="background:#fef3c7;color:#b45309">Regime: Aguaceiros</span>
-        <span class="badge badge-conf-high">Alta confiança (±12 km/h)</span>
-      </div>
-      <div class="hstrip"><div class="hstrip-cell" title="07h · 54 km/h · 0.1 mm"><div class="hstrip-bar" style="height:54%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">7</div></div><div class="hstrip-cell" title="08h · 54 km/h · 0.1 mm"><div class="hstrip-bar" style="height:54%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">8</div></div><div class="hstrip-cell" title="09h · 56 km/h · 0.1 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">9</div></div><div class="hstrip-cell" title="10h · 56 km/h · 0.2 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">10</div></div><div class="hstrip-cell" title="11h · 57 km/h · 0.3 mm"><div class="hstrip-bar" style="height:57%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">11</div></div><div class="hstrip-cell" title="12h · 56 km/h · 0.4 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">12</div></div><div class="hstrip-cell" title="13h · 55 km/h · 0.3 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">13</div></div><div class="hstrip-cell" title="14h · 55 km/h · 0.4 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">14</div></div><div class="hstrip-cell" title="15h · 53 km/h · 0.4 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">15</div></div><div class="hstrip-cell" title="16h · 53 km/h · 0.4 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">16</div></div><div class="hstrip-cell" title="17h · 51 km/h · 0.3 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">17</div></div></div>
-      <div class="hstrip-legend">07h ··········· 12h ··········· 17h · barra=rajada · base=chuva</div>
-      <div class="row"><span>Rajadas</span><b>57 km/h (méd) · 69 km/h (pior)</b></div>
-      <div class="row"><span>Vento médio</span><b>29 km/h</b></div>
-      <div class="row"><span>Chuva 07-17h</span><b>3.2 mm · 5h com chuva · pico 0.5 mm/h</b></div>
-      <div class="row"><span>Humidade</span><b>84%</b></div>
-      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
-    </div>
-    <div class="chip">
-      <h3><span class="v-icon" style="color:#b45309">⚠</span> Este — Praia da Vitória</h3>
-      <div class="badges">
-        <span class="badge" style="background:#fef3c7;color:#b45309">Regime: Aguaceiros</span>
-        <span class="badge badge-conf-high">Alta confiança (±20 km/h)</span>
-      </div>
-      <div class="hstrip"><div class="hstrip-cell" title="07h · 55 km/h · 0.1 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">7</div></div><div class="hstrip-cell" title="08h · 57 km/h · 0.1 mm"><div class="hstrip-bar" style="height:57%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">8</div></div><div class="hstrip-cell" title="09h · 60 km/h · 0.1 mm"><div class="hstrip-bar" style="height:60%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">9</div></div><div class="hstrip-cell" title="10h · 65 km/h · 0.2 mm"><div class="hstrip-bar" style="height:65%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">10</div></div><div class="hstrip-cell" title="11h · 63 km/h · 0.3 mm"><div class="hstrip-bar" style="height:63%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">11</div></div><div class="hstrip-cell" title="12h · 62 km/h · 0.3 mm"><div class="hstrip-bar" style="height:62%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">12</div></div><div class="hstrip-cell" title="13h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">13</div></div><div class="hstrip-cell" title="14h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">14</div></div><div class="hstrip-cell" title="15h · 51 km/h · 0.2 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">15</div></div><div class="hstrip-cell" title="16h · 51 km/h · 0.3 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">16</div></div><div class="hstrip-cell" title="17h · 47 km/h · 0.2 mm"><div class="hstrip-bar" style="height:47%; background:#84cc16"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">17</div></div></div>
-      <div class="hstrip-legend">07h ··········· 12h ··········· 17h · barra=rajada · base=chuva</div>
-      <div class="row"><span>Rajadas</span><b>66 km/h (méd) · 85 km/h (pior)</b></div>
-      <div class="row"><span>Vento médio</span><b>30 km/h</b></div>
-      <div class="row"><span>Chuva 07-17h</span><b>2.2 mm · 4h com chuva · pico 0.4 mm/h</b></div>
-      <div class="row"><span>Humidade</span><b>82%</b></div>
-      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
-    </div>
-    <div class="chip">
-      <h3><span class="v-icon" style="color:#b45309">⚠</span> Sudeste — Vila das Lajes</h3>
-      <div class="badges">
-        <span class="badge" style="background:#fef3c7;color:#b45309">Regime: Aguaceiros</span>
-        <span class="badge badge-conf-high">Alta confiança (±20 km/h)</span>
-      </div>
-      <div class="hstrip"><div class="hstrip-cell" title="07h · 55 km/h · 0.1 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">7</div></div><div class="hstrip-cell" title="08h · 57 km/h · 0.1 mm"><div class="hstrip-bar" style="height:57%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">8</div></div><div class="hstrip-cell" title="09h · 60 km/h · 0.1 mm"><div class="hstrip-bar" style="height:60%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">9</div></div><div class="hstrip-cell" title="10h · 65 km/h · 0.2 mm"><div class="hstrip-bar" style="height:65%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">10</div></div><div class="hstrip-cell" title="11h · 63 km/h · 0.3 mm"><div class="hstrip-bar" style="height:63%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">11</div></div><div class="hstrip-cell" title="12h · 62 km/h · 0.3 mm"><div class="hstrip-bar" style="height:62%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">12</div></div><div class="hstrip-cell" title="13h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">13</div></div><div class="hstrip-cell" title="14h · 53 km/h · 0.2 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">14</div></div><div class="hstrip-cell" title="15h · 51 km/h · 0.2 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">15</div></div><div class="hstrip-cell" title="16h · 51 km/h · 0.3 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">16</div></div><div class="hstrip-cell" title="17h · 47 km/h · 0.2 mm"><div class="hstrip-bar" style="height:47%; background:#84cc16"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">17</div></div></div>
-      <div class="hstrip-legend">07h ··········· 12h ··········· 17h · barra=rajada · base=chuva</div>
-      <div class="row"><span>Rajadas</span><b>66 km/h (méd) · 85 km/h (pior)</b></div>
-      <div class="row"><span>Vento médio</span><b>30 km/h</b></div>
-      <div class="row"><span>Chuva 07-17h</span><b>2.2 mm · 4h com chuva · pico 0.4 mm/h</b></div>
-      <div class="row"><span>Humidade</span><b>82%</b></div>
-      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
-    </div>
-    <div class="chip">
-      <h3><span class="v-icon" style="color:#b45309">⚠</span> Oeste — Santa Bárbara</h3>
-      <div class="badges">
-        <span class="badge" style="background:#fef3c7;color:#b45309">Regime: Aguaceiros</span>
-        <span class="badge badge-conf-high">Alta confiança (±12 km/h)</span>
-      </div>
-      <div class="hstrip"><div class="hstrip-cell" title="07h · 54 km/h · 0.2 mm"><div class="hstrip-bar" style="height:54%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">7</div></div><div class="hstrip-cell" title="08h · 54 km/h · 0.1 mm"><div class="hstrip-bar" style="height:54%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">8</div></div><div class="hstrip-cell" title="09h · 56 km/h · 0.1 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:transparent"></div><div class="hstrip-hour">9</div></div><div class="hstrip-cell" title="10h · 56 km/h · 0.2 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">10</div></div><div class="hstrip-cell" title="11h · 57 km/h · 0.3 mm"><div class="hstrip-bar" style="height:57%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">11</div></div><div class="hstrip-cell" title="12h · 56 km/h · 0.4 mm"><div class="hstrip-bar" style="height:56%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">12</div></div><div class="hstrip-cell" title="13h · 55 km/h · 0.3 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">13</div></div><div class="hstrip-cell" title="14h · 55 km/h · 0.4 mm"><div class="hstrip-bar" style="height:55%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">14</div></div><div class="hstrip-cell" title="15h · 53 km/h · 0.3 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">15</div></div><div class="hstrip-cell" title="16h · 53 km/h · 0.4 mm"><div class="hstrip-bar" style="height:53%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">16</div></div><div class="hstrip-cell" title="17h · 51 km/h · 0.3 mm"><div class="hstrip-bar" style="height:51%; background:#b45309"></div><div class="hstrip-prec" style="background:#93c5fd"></div><div class="hstrip-hour">17</div></div></div>
-      <div class="hstrip-legend">07h ··········· 12h ··········· 17h · barra=rajada · base=chuva</div>
-      <div class="row"><span>Rajadas</span><b>57 km/h (méd) · 69 km/h (pior)</b></div>
-      <div class="row"><span>Vento médio</span><b>27 km/h</b></div>
-      <div class="row"><span>Chuva 07-17h</span><b>3.1 mm · 6h com chuva · pico 0.5 mm/h</b></div>
-      <div class="row"><span>Humidade</span><b>85%</b></div>
-      <div class="row"><span>Veredicto</span><b style="color:#b45309">🟡</b></div>
+      <div class="vph">Cautela operacional — avaliar caso a caso, priorizar trabalho interior e abrigado.</div>
+      <div class="vsub">Regime predominante: <b>ESTÁVEL</b> em 5/5 zonas · Confiança global: <b>LOW</b></div>
     </div>
   </div>
-  <h2 class="section">Validação 24h — Previsão vs Realidade</h2>
-  <div class="skill-panel">
-    <div class="skill-empty">Sem histórico ainda — recolha começou hoje (Domingo, 10 Mai). A partir de amanhã, este painel mostra a precisão do briefing emitido para ontem versus os valores realmente observados (Open-Meteo analysis).</div>
-  </div>
+</section>
 
-  <h2 class="section">Matriz Semanal — 7 Dias × 5 Zonas</h2>
-  <div class="matrix-wrapper"><table class="matrix">
-    <thead><tr><th class="day-col">Dia</th><th>🏝 Ilha</th><th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th></tr></thead><tbody><tr class="today-row"><td class="day-col">Dom 10/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.5mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">57 km/h</span><span class="v-prec wet">3.2mm</span><span class="v-hours">💧5h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.2mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">66 km/h</span><span class="v-prec wet">2.2mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">57 km/h</span><span class="v-prec wet">3.1mm</span><span class="v-hours">💧6h</span></div></td></tr><tr><td class="day-col">Seg 11/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">47 km/h</span><span class="v-prec wet">2.3mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">48 km/h</span><span class="v-prec wet">2.4mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">47 km/h</span><span class="v-prec wet">2.1mm</span><span class="v-hours">💧4h</span></div></td></tr><tr><td class="day-col">Ter 12/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.2mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.4mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.0mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.0mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span><span class="v-gust">30 km/h</span><span class="v-prec wet">1.6mm</span><span class="v-hours">💧3h</span></div></td></tr><tr><td class="day-col">Qua 13/05</td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">35 km/h</span><span class="v-prec wet">1.9mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">34 km/h</span><span class="v-prec wet">2.0mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">35 km/h</span><span class="v-prec wet">2.0mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">35 km/h</span><span class="v-prec wet">2.0mm</span><span class="v-hours">💧4h</span></div></td><td class="cell-yellow"><div class="cell-stack"><span class="v-icon">⚠<span class="conf-mark">?</span></span><span class="v-gust">34 km/h</span><span class="v-prec wet">2.0mm</span><span class="v-hours">💧3h</span></div></td></tr><tr><td class="day-col">Qui 14/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.9mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">26 km/h</span><span class="v-prec wet">0.9mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.8mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">27 km/h</span><span class="v-prec wet">0.8mm</span><span class="v-hours">💧2h</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">26 km/h</span><span class="v-prec wet">0.9mm</span><span class="v-hours">💧2h</span></div></td></tr><tr><td class="day-col">Sex 15/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">29 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">31 km/h</span><span class="v-prec wet">0.1mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">29 km/h</span><span class="v-prec wet">0.1mm</span></div></td></tr><tr><td class="day-col">Sáb 16/05</td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">39 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓<span class="conf-mark">?</span></span><span class="v-gust">43 km/h</span><span class="v-prec dry">0.0mm</span></div></td><td class="cell-green"><div class="cell-stack"><span class="v-icon">✓</span><span class="v-gust">39 km/h</span><span class="v-prec dry">0.0mm</span></div></td></tr></tbody></table></div>
+<section>
+  <h2>Zonas · Hoje</h2>
+  <div class="zones">
+    <div class="zone-card" style="border-left:6px solid #e6a700;">
+      <div class="zone-head">
+        <div class="zone-name">Sul — Angra do Heroísmo</div>
+        <div class="zone-verdict">🟡</div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span>
+        <span class="badge" style="background:#fdecec;color:#a32626;border:1px solid #a32626;">Conf LOW ±12 km/h</span>
+      </div>
+      <div class="bandwrap">
+        <div class="bandlabels"><span>07h</span><span>12h</span><span>17h</span></div>
+        <div class="band"><div class="bar" title="07h · 47 km/h · 0.4 mm" style="height:99%;background:#7eb4ec;"></div><div class="bar" title="08h · 46 km/h · 0.2 mm" style="height:96%;background:#a8a8a8;"></div><div class="bar" title="09h · 46 km/h · 0.2 mm" style="height:97%;background:#a8a8a8;"></div><div class="bar" title="10h · 48 km/h · 0.3 mm" style="height:100%;background:#7eb4ec;"></div><div class="bar" title="11h · 45 km/h · 0.3 mm" style="height:95%;background:#7eb4ec;"></div><div class="bar" title="12h · 45 km/h · 0.2 mm" style="height:94%;background:#a8a8a8;"></div><div class="bar" title="13h · 42 km/h · 0.2 mm" style="height:89%;background:#a8a8a8;"></div><div class="bar" title="14h · 40 km/h · 0.1 mm" style="height:84%;background:#a8a8a8;"></div><div class="bar" title="15h · 38 km/h · 0.1 mm" style="height:80%;background:#a8a8a8;"></div><div class="bar" title="16h · 39 km/h · 0.1 mm" style="height:83%;background:#a8a8a8;"></div><div class="bar" title="17h · 34 km/h · 0.1 mm" style="height:71%;background:#a8a8a8;"></div></div>
+      </div>
+      <div class="metrics">
+        <div><b>Rajadas</b>: <span>48 km/h</span> <small>(pior 59)</small></div>
+        <div><b>Vento médio</b>: <span>25 km/h</span></div>
+        <div><b>Chuva</b>: <span>2.4 mm</span> · 💧 4.5h · pico 0.4 mm/h</div>
+        <div><b>Humidade</b>: <span>78%</span></div>
+        <div><b>Manhã/Tarde</b>: <span>1.9 / 0.5 mm</span></div>
+      </div>
+    </div>
+    <div class="zone-card" style="border-left:6px solid #e6a700;">
+      <div class="zone-head">
+        <div class="zone-name">Norte — Biscoitos</div>
+        <div class="zone-verdict">🟡</div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span>
+        <span class="badge" style="background:#fdecec;color:#a32626;border:1px solid #a32626;">Conf LOW ±10 km/h</span>
+      </div>
+      <div class="bandwrap">
+        <div class="bandlabels"><span>07h</span><span>12h</span><span>17h</span></div>
+        <div class="band"><div class="bar" title="07h · 46 km/h · 0.3 mm" style="height:100%;background:#7eb4ec;"></div><div class="bar" title="08h · 45 km/h · 0.2 mm" style="height:98%;background:#a8a8a8;"></div><div class="bar" title="09h · 45 km/h · 0.2 mm" style="height:100%;background:#a8a8a8;"></div><div class="bar" title="10h · 43 km/h · 0.2 mm" style="height:95%;background:#a8a8a8;"></div><div class="bar" title="11h · 44 km/h · 0.3 mm" style="height:96%;background:#7eb4ec;"></div><div class="bar" title="12h · 45 km/h · 0.2 mm" style="height:98%;background:#a8a8a8;"></div><div class="bar" title="13h · 41 km/h · 0.2 mm" style="height:90%;background:#a8a8a8;"></div><div class="bar" title="14h · 37 km/h · 0.1 mm" style="height:81%;background:#a8a8a8;"></div><div class="bar" title="15h · 34 km/h · 0.2 mm" style="height:75%;background:#a8a8a8;"></div><div class="bar" title="16h · 33 km/h · 0.2 mm" style="height:73%;background:#a8a8a8;"></div><div class="bar" title="17h · 33 km/h · 0.1 mm" style="height:73%;background:#a8a8a8;"></div></div>
+      </div>
+      <div class="metrics">
+        <div><b>Rajadas</b>: <span>46 km/h</span> <small>(pior 56)</small></div>
+        <div><b>Vento médio</b>: <span>26 km/h</span></div>
+        <div><b>Chuva</b>: <span>2.3 mm</span> · 💧 4.5h · pico 0.4 mm/h</div>
+        <div><b>Humidade</b>: <span>77%</span></div>
+        <div><b>Manhã/Tarde</b>: <span>1.8 / 0.6 mm</span></div>
+      </div>
+    </div>
+    <div class="zone-card" style="border-left:6px solid #e6a700;">
+      <div class="zone-head">
+        <div class="zone-name">Este — Praia da Vitória</div>
+        <div class="zone-verdict">🟡</div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span>
+        <span class="badge" style="background:#fdecec;color:#a32626;border:1px solid #a32626;">Conf LOW ±12 km/h</span>
+      </div>
+      <div class="bandwrap">
+        <div class="bandlabels"><span>07h</span><span>12h</span><span>17h</span></div>
+        <div class="band"><div class="bar" title="07h · 47 km/h · 0.2 mm" style="height:99%;background:#a8a8a8;"></div><div class="bar" title="08h · 46 km/h · 0.2 mm" style="height:96%;background:#a8a8a8;"></div><div class="bar" title="09h · 46 km/h · 0.2 mm" style="height:97%;background:#a8a8a8;"></div><div class="bar" title="10h · 48 km/h · 0.3 mm" style="height:100%;background:#7eb4ec;"></div><div class="bar" title="11h · 45 km/h · 0.2 mm" style="height:95%;background:#a8a8a8;"></div><div class="bar" title="12h · 45 km/h · 0.2 mm" style="height:94%;background:#a8a8a8;"></div><div class="bar" title="13h · 42 km/h · 0.1 mm" style="height:89%;background:#a8a8a8;"></div><div class="bar" title="14h · 40 km/h · 0.1 mm" style="height:84%;background:#a8a8a8;"></div><div class="bar" title="15h · 38 km/h · 0.1 mm" style="height:80%;background:#a8a8a8;"></div><div class="bar" title="16h · 39 km/h · 0.1 mm" style="height:83%;background:#a8a8a8;"></div><div class="bar" title="17h · 34 km/h · 0.1 mm" style="height:71%;background:#a8a8a8;"></div></div>
+      </div>
+      <div class="metrics">
+        <div><b>Rajadas</b>: <span>48 km/h</span> <small>(pior 59)</small></div>
+        <div><b>Vento médio</b>: <span>28 km/h</span></div>
+        <div><b>Chuva</b>: <span>2.2 mm</span> · 💧 4.5h · pico 0.3 mm/h</div>
+        <div><b>Humidade</b>: <span>76%</span></div>
+        <div><b>Manhã/Tarde</b>: <span>1.6 / 0.5 mm</span></div>
+      </div>
+    </div>
+    <div class="zone-card" style="border-left:6px solid #e6a700;">
+      <div class="zone-head">
+        <div class="zone-name">Sudeste — Vila das Lajes</div>
+        <div class="zone-verdict">🟡</div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span>
+        <span class="badge" style="background:#fdecec;color:#a32626;border:1px solid #a32626;">Conf LOW ±12 km/h</span>
+      </div>
+      <div class="bandwrap">
+        <div class="bandlabels"><span>07h</span><span>12h</span><span>17h</span></div>
+        <div class="band"><div class="bar" title="07h · 47 km/h · 0.2 mm" style="height:99%;background:#a8a8a8;"></div><div class="bar" title="08h · 46 km/h · 0.2 mm" style="height:96%;background:#a8a8a8;"></div><div class="bar" title="09h · 46 km/h · 0.2 mm" style="height:97%;background:#a8a8a8;"></div><div class="bar" title="10h · 48 km/h · 0.3 mm" style="height:100%;background:#7eb4ec;"></div><div class="bar" title="11h · 45 km/h · 0.2 mm" style="height:95%;background:#a8a8a8;"></div><div class="bar" title="12h · 45 km/h · 0.2 mm" style="height:94%;background:#a8a8a8;"></div><div class="bar" title="13h · 42 km/h · 0.1 mm" style="height:89%;background:#a8a8a8;"></div><div class="bar" title="14h · 40 km/h · 0.1 mm" style="height:84%;background:#a8a8a8;"></div><div class="bar" title="15h · 38 km/h · 0.1 mm" style="height:80%;background:#a8a8a8;"></div><div class="bar" title="16h · 39 km/h · 0.1 mm" style="height:83%;background:#a8a8a8;"></div><div class="bar" title="17h · 34 km/h · 0.1 mm" style="height:71%;background:#a8a8a8;"></div></div>
+      </div>
+      <div class="metrics">
+        <div><b>Rajadas</b>: <span>48 km/h</span> <small>(pior 59)</small></div>
+        <div><b>Vento médio</b>: <span>28 km/h</span></div>
+        <div><b>Chuva</b>: <span>2.2 mm</span> · 💧 4.5h · pico 0.3 mm/h</div>
+        <div><b>Humidade</b>: <span>76%</span></div>
+        <div><b>Manhã/Tarde</b>: <span>1.6 / 0.5 mm</span></div>
+      </div>
+    </div>
+    <div class="zone-card" style="border-left:6px solid #e6a700;">
+      <div class="zone-head">
+        <div class="zone-name">Oeste — Santa Bárbara</div>
+        <div class="zone-verdict">🟡</div>
+      </div>
+      <div class="badges">
+        <span class="badge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span>
+        <span class="badge" style="background:#fdecec;color:#a32626;border:1px solid #a32626;">Conf LOW ±10 km/h</span>
+      </div>
+      <div class="bandwrap">
+        <div class="bandlabels"><span>07h</span><span>12h</span><span>17h</span></div>
+        <div class="band"><div class="bar" title="07h · 46 km/h · 0.3 mm" style="height:100%;background:#7eb4ec;"></div><div class="bar" title="08h · 45 km/h · 0.1 mm" style="height:98%;background:#a8a8a8;"></div><div class="bar" title="09h · 45 km/h · 0.1 mm" style="height:100%;background:#a8a8a8;"></div><div class="bar" title="10h · 43 km/h · 0.1 mm" style="height:95%;background:#a8a8a8;"></div><div class="bar" title="11h · 44 km/h · 0.2 mm" style="height:96%;background:#a8a8a8;"></div><div class="bar" title="12h · 45 km/h · 0.2 mm" style="height:98%;background:#a8a8a8;"></div><div class="bar" title="13h · 41 km/h · 0.2 mm" style="height:90%;background:#a8a8a8;"></div><div class="bar" title="14h · 37 km/h · 0.1 mm" style="height:81%;background:#a8a8a8;"></div><div class="bar" title="15h · 34 km/h · 0.2 mm" style="height:75%;background:#a8a8a8;"></div><div class="bar" title="16h · 33 km/h · 0.1 mm" style="height:73%;background:#a8a8a8;"></div><div class="bar" title="17h · 33 km/h · 0.1 mm" style="height:73%;background:#a8a8a8;"></div></div>
+      </div>
+      <div class="metrics">
+        <div><b>Rajadas</b>: <span>46 km/h</span> <small>(pior 56)</small></div>
+        <div><b>Vento médio</b>: <span>22 km/h</span></div>
+        <div><b>Chuva</b>: <span>1.8 mm</span> · 💧 3.5h · pico 0.3 mm/h</div>
+        <div><b>Humidade</b>: <span>78%</span></div>
+        <div><b>Manhã/Tarde</b>: <span>1.3 / 0.4 mm</span></div>
+      </div>
+    </div></div>
+</section>
 
-  <h2 class="section">Tabela de Decisão — Hoje por Zona</h2>
-  <div class="matrix-wrapper"><table class="decision">
-    <thead><tr>
-      <th>Zona</th><th>Raj. (méd)</th><th>Raj. (pior)</th><th>Vento</th>
-      <th>Chuva 07-17h</th><th>Hrs/chuva</th><th>Humidade</th><th>Regime</th>
-      <th>Manhã</th><th>Tarde</th><th>Veredicto</th>
-    </tr></thead><tbody><tr>
-      <td class="zone-name">Sul — Angra do Heroísmo</td>
-      <td class="cell-yellow">66</td>
-      <td>85</td>
-      <td class="cell-yellow">28</td>
-      <td class="cell-yellow">2.5 mm</td>
-      <td>4h</td>
-      <td class="cell-yellow">84%</td>
-      <td><span class="badge" style="background:#fef3c7;color:#b45309">Aguaceiros</span></td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow"><b>🟡</b></td>
-    </tr><tr>
-      <td class="zone-name">Norte — Biscoitos</td>
-      <td class="cell-yellow">57</td>
-      <td>69</td>
-      <td class="cell-yellow">29</td>
-      <td class="cell-yellow">3.2 mm</td>
-      <td>5h</td>
-      <td class="cell-yellow">84%</td>
-      <td><span class="badge" style="background:#fef3c7;color:#b45309">Aguaceiros</span></td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow"><b>🟡</b></td>
-    </tr><tr>
-      <td class="zone-name">Este — Praia da Vitória</td>
-      <td class="cell-yellow">66</td>
-      <td>85</td>
-      <td class="cell-yellow">30</td>
-      <td class="cell-yellow">2.2 mm</td>
-      <td>4h</td>
-      <td class="cell-yellow">82%</td>
-      <td><span class="badge" style="background:#fef3c7;color:#b45309">Aguaceiros</span></td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow"><b>🟡</b></td>
-    </tr><tr>
-      <td class="zone-name">Sudeste — Vila das Lajes</td>
-      <td class="cell-yellow">66</td>
-      <td>85</td>
-      <td class="cell-yellow">30</td>
-      <td class="cell-yellow">2.2 mm</td>
-      <td>4h</td>
-      <td class="cell-yellow">82%</td>
-      <td><span class="badge" style="background:#fef3c7;color:#b45309">Aguaceiros</span></td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow"><b>🟡</b></td>
-    </tr><tr>
-      <td class="zone-name">Oeste — Santa Bárbara</td>
-      <td class="cell-yellow">57</td>
-      <td>69</td>
-      <td class="cell-yellow">27</td>
-      <td class="cell-yellow">3.1 mm</td>
-      <td>6h</td>
-      <td class="cell-yellow">85%</td>
-      <td><span class="badge" style="background:#fef3c7;color:#b45309">Aguaceiros</span></td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow">🟡</td>
-      <td class="cell-yellow"><b>🟡</b></td>
-    </tr></tbody></table></div>
+<section>
+  <h2>Validação 24h (ontem · previsão vs realidade)</h2>
+  <div class="scroll-x"><table class="vtable">
+      <thead><tr><th>Zona</th><th>Rajadas (prev → real)</th><th>Δ Vento</th><th>Chuva (prev → real)</th><th>Δ Chuva</th><th>Horas chuva</th></tr></thead>
+      <tbody><tr>
+          <td><b>Sul</b></td>
+          <td>66 → 86 km/h</td>
+          <td><span style="color:#1d4d8c;font-weight:600;">PESSIMISTA (+20)</span></td>
+          <td>2.5 → 2.8 mm</td>
+          <td><span style="color:#22a25b;font-weight:600;">CERTO (+0.3)</span></td>
+          <td>4.0h → 3h</td>
+        </tr><tr>
+          <td><b>Norte</b></td>
+          <td>57 → 67 km/h</td>
+          <td><span style="color:#1d4d8c;font-weight:600;">PESSIMISTA (+10)</span></td>
+          <td>3.2 → 2.8 mm</td>
+          <td><span style="color:#22a25b;font-weight:600;">CERTO (-0.4)</span></td>
+          <td>5.3h → 2h</td>
+        </tr><tr>
+          <td><b>Este</b></td>
+          <td>66 → 86 km/h</td>
+          <td><span style="color:#1d4d8c;font-weight:600;">PESSIMISTA (+20)</span></td>
+          <td>2.2 → 1.3 mm</td>
+          <td><span style="color:#22a25b;font-weight:600;">CERTO (-0.9)</span></td>
+          <td>3.7h → 0h</td>
+        </tr><tr>
+          <td><b>Sudeste</b></td>
+          <td>66 → 86 km/h</td>
+          <td><span style="color:#1d4d8c;font-weight:600;">PESSIMISTA (+20)</span></td>
+          <td>2.2 → 1.3 mm</td>
+          <td><span style="color:#22a25b;font-weight:600;">CERTO (-0.9)</span></td>
+          <td>3.7h → 0h</td>
+        </tr><tr>
+          <td><b>Oeste</b></td>
+          <td>57 → 67 km/h</td>
+          <td><span style="color:#1d4d8c;font-weight:600;">PESSIMISTA (+10)</span></td>
+          <td>3.1 → 2.8 mm</td>
+          <td><span style="color:#22a25b;font-weight:600;">CERTO (-0.3)</span></td>
+          <td>5.7h → 2h</td>
+        </tr></tbody>
+    </table></div>
+</section>
 
-  <h2 class="section">Matriz de Trabalhos — Hoje por Zona</h2>
-  <div class="matrix-wrapper"><table class="work-matrix">
-    <thead><tr><th>Tipo de Trabalho</th><th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th></tr></thead><tbody><tr><td class="task-name">Içamento UE (split/multi)</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td></tr><tr><td class="task-name">Içamento monobloco / B. Calor</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td><td class="cell-yellow">🚫 Adiar</td></tr><tr><td class="task-name">Trabalho em telhado/cobertura</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td><td class="cell-yellow">⚠️ Avaliar</td></tr><tr><td class="task-name">Condutas exteriores</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Vácuos refrigeração (ext.)</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td><td class="cell-yellow">⚠️ Humid.</td></tr><tr><td class="task-name">Carga fluido frigorigéneo</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Extração industrial (cond.)</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td><td class="cell-yellow">✅ Avançar</td></tr><tr><td class="task-name">Fachada / caixas elétricas</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td><td class="cell-yellow">⚠️ Chuva</td></tr><tr><td class="task-name">Trabalho interior</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td><td class="cell-yellow">✅ Sempre</td></tr></tbody></table></div>
+<section>
+  <h2>Matriz Semanal · 7 dias</h2>
+  <div class="scroll-x"><table class="wtable">
+  <thead><tr><th>Zona</th><th>Seg<br><small>11/5</small></th><th>Ter<br><small>12/5</small></th><th>Qua<br><small>13/5</small></th><th>Qui<br><small>14/5</small></th><th>Sex<br><small>15/5</small></th><th>Sáb<br><small>16/5</small></th><th>Dom<br><small>17/5</small></th></tr></thead>
+  <tbody><tr><th>Sul</th><td style="background:#fff5e0;">🟡 ?<br><b>48</b><br><small>2.4mm</small><br><small>💧 4h</small></td><td style="background:#e7f6ec;">🟢<br><b>31</b><br><small>0.6mm</small><br><small>💧 1h</small></td><td style="background:#fff5e0;">🟡<br><b>32</b><br><small>1.1mm</small><br><small>💧 2h</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.2mm</small></td><td style="background:#e7f6ec;">🟢<br><b>24</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.3mm</small></td><td style="background:#e7f6ec;">🟢<br><b>21</b><br><small>0.0mm</small></td></tr><tr><th>Norte</th><td style="background:#fff5e0;">🟡 ?<br><b>46</b><br><small>2.3mm</small><br><small>💧 4h</small></td><td style="background:#e7f6ec;">🟢<br><b>29</b><br><small>0.9mm</small><br><small>💧 1h</small></td><td style="background:#fff5e0;">🟡<br><b>30</b><br><small>1.2mm</small><br><small>💧 2h</small></td><td style="background:#e7f6ec;">🟢<br><b>23</b><br><small>0.2mm</small></td><td style="background:#e7f6ec;">🟢<br><b>21</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>24</b><br><small>0.3mm</small></td><td style="background:#e7f6ec;">🟢<br><b>18</b><br><small>0.3mm</small></td></tr><tr><th>Este</th><td style="background:#fff5e0;">🟡 ?<br><b>48</b><br><small>2.2mm</small><br><small>💧 4h</small></td><td style="background:#e7f6ec;">🟢<br><b>31</b><br><small>0.4mm</small><br><small>💧 1h</small></td><td style="background:#fff5e0;">🟡<br><b>32</b><br><small>1.4mm</small><br><small>💧 2h</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.2mm</small></td><td style="background:#e7f6ec;">🟢<br><b>24</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>21</b><br><small>0.0mm</small></td></tr><tr><th>Sudeste</th><td style="background:#fff5e0;">🟡 ?<br><b>48</b><br><small>2.2mm</small><br><small>💧 4h</small></td><td style="background:#e7f6ec;">🟢<br><b>31</b><br><small>0.4mm</small><br><small>💧 1h</small></td><td style="background:#fff5e0;">🟡<br><b>32</b><br><small>1.4mm</small><br><small>💧 2h</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.2mm</small></td><td style="background:#e7f6ec;">🟢<br><b>24</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>25</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>21</b><br><small>0.0mm</small></td></tr><tr><th>Oeste</th><td style="background:#fff5e0;">🟡 ?<br><b>46</b><br><small>1.8mm</small><br><small>💧 4h</small></td><td style="background:#e7f6ec;">🟢<br><b>29</b><br><small>0.8mm</small><br><small>💧 1h</small></td><td style="background:#fff5e0;">🟡<br><b>30</b><br><small>1.1mm</small><br><small>💧 2h</small></td><td style="background:#e7f6ec;">🟢<br><b>23</b><br><small>0.2mm</small></td><td style="background:#e7f6ec;">🟢<br><b>21</b><br><small>0.0mm</small></td><td style="background:#e7f6ec;">🟢<br><b>24</b><br><small>0.3mm</small></td><td style="background:#e7f6ec;">🟢<br><b>18</b><br><small>0.3mm</small></td></tr></tbody>
+</table></div>
+</section>
 
-  <h2 class="section">Conselhos Estratégicos</h2>
-  <div class="advice"><strong>Melhor janela:</strong> Quinta, 14 Mai — 5/5 zonas em verde. Reservar para içamentos e trabalhos críticos em altura.</div>
-  <div class="advice"><strong>Vento elevado hoje:</strong> rajadas médias até 66 km/h. Adiar todos os içamentos pesados e trabalhos em altura sem proteção.</div>
-  <div class="advice"><strong>Regime de aguaceiros generalizado:</strong> previsão de chuva intermitente em 5 zonas, até 6 horas com chuva. Planear trabalho em janelas curtas; ter abrigos e proteção pronta para retomar.</div>
+<section>
+  <h2>Tabela de Decisão · Hoje</h2>
+  <div class="scroll-x"><table class="dtable">
+  <thead><tr><th>Zona</th><th>Rajadas</th><th>Chuva</th><th>Hrs chuva</th><th>Humidade</th><th>Regime</th><th>Veredicto</th></tr></thead>
+  <tbody><tr style="background:#fff5e0;">
+      <td><b>Sul</b></td>
+      <td>🟢 48 km/h</td>
+      <td>🟡 2.4 mm</td>
+      <td>💧 4.5h</td>
+      <td>🟢 78%</td>
+      <td><span class="rbadge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span></td>
+      <td><b>🟡</b></td>
+    </tr><tr style="background:#fff5e0;">
+      <td><b>Norte</b></td>
+      <td>🟢 46 km/h</td>
+      <td>🟡 2.3 mm</td>
+      <td>💧 4.5h</td>
+      <td>🟢 77%</td>
+      <td><span class="rbadge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span></td>
+      <td><b>🟡</b></td>
+    </tr><tr style="background:#fff5e0;">
+      <td><b>Este</b></td>
+      <td>🟢 48 km/h</td>
+      <td>🟡 2.2 mm</td>
+      <td>💧 4.5h</td>
+      <td>🟢 76%</td>
+      <td><span class="rbadge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span></td>
+      <td><b>🟡</b></td>
+    </tr><tr style="background:#fff5e0;">
+      <td><b>Sudeste</b></td>
+      <td>🟢 48 km/h</td>
+      <td>🟡 2.2 mm</td>
+      <td>💧 4.5h</td>
+      <td>🟢 76%</td>
+      <td><span class="rbadge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span></td>
+      <td><b>🟡</b></td>
+    </tr><tr style="background:#fff5e0;">
+      <td><b>Oeste</b></td>
+      <td>🟢 46 km/h</td>
+      <td>🟡 1.8 mm</td>
+      <td>💧 3.5h</td>
+      <td>🟢 78%</td>
+      <td><span class="rbadge" style="background:#e7f6ec;color:#22a25b;border:1px solid #22a25b;">ESTÁVEL</span></td>
+      <td><b>🟡</b></td>
+    </tr></tbody>
+</table></div>
+</section>
 
-  <h2 class="section">Windguru — Verificação Marítima</h2>
-  <div class="windguru-grid">
-    <a class="wg-card" href="https://www.windguru.cz/88976" target="_blank" rel="noopener"><div class="wg-zone">Sul</div><div class="wg-loc">Angra Heroísmo ↗</div></a>
-    <a class="wg-card" href="https://www.windguru.cz/35922" target="_blank" rel="noopener"><div class="wg-zone">Norte</div><div class="wg-loc">Biscoitos ↗</div></a>
-    <a class="wg-card" href="https://www.windguru.cz/35923" target="_blank" rel="noopener"><div class="wg-zone">Este</div><div class="wg-loc">Praia Vitória ↗</div></a>
-    <a class="wg-card" href="https://www.windguru.cz/895975" target="_blank" rel="noopener"><div class="wg-zone">Sudeste</div><div class="wg-loc">Vila das Lajes ↗</div></a>
-    <a class="wg-card" href="https://www.windguru.cz/14904" target="_blank" rel="noopener"><div class="wg-zone">Oeste</div><div class="wg-loc">Santa Bárbara ↗</div></a>
-    <a class="wg-card" href="https://www.windguru.cz/32852" target="_blank" rel="noopener"><div class="wg-zone">Oeste</div><div class="wg-loc">Sta. Bárbara 2 ↗</div></a>
-  </div>
+<section>
+  <h2>Matriz de Trabalhos × Zona</h2>
+  <div class="scroll-x"><table class="ktable">
+  <thead><tr><th>Tipo de Trabalho</th><th>Sul</th><th>Norte</th><th>Este</th><th>Sudeste</th><th>Oeste</th></tr></thead>
+  <tbody><tr><td>Içamento UE (split/multisplit)</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td></tr><tr><td>Içamento monobloco / bomba calor pesado</td><td style="background:#fff5e0;">🚫 Adiar</td><td style="background:#fff5e0;">🚫 Adiar</td><td style="background:#fff5e0;">🚫 Adiar</td><td style="background:#fff5e0;">🚫 Adiar</td><td style="background:#fff5e0;">🚫 Adiar</td></tr><tr><td>Instalação em telhado/cobertura</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td><td style="background:#fff5e0;">⚠️ Avaliar</td></tr><tr><td>Passagem de condutas exteriores</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td></tr><tr><td>Vácuos de refrigeração (exterior)</td><td style="background:#fff5e0;">⚠️ Humi.</td><td style="background:#fff5e0;">⚠️ Humi.</td><td style="background:#fff5e0;">⚠️ Humi.</td><td style="background:#fff5e0;">⚠️ Humi.</td><td style="background:#fff5e0;">⚠️ Humi.</td></tr><tr><td>Carga de fluido frigorigéneo</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td></tr><tr><td>Extração industrial (condutas teto)</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td><td style="background:#fff5e0;">✅ Avançar</td></tr><tr><td>Trabalhos em fachada (caixas elét.)</td><td style="background:#fff5e0;">⚠️ Chuva</td><td style="background:#fff5e0;">⚠️ Chuva</td><td style="background:#fff5e0;">⚠️ Chuva</td><td style="background:#fff5e0;">⚠️ Chuva</td><td style="background:#fff5e0;">⚠️ Chuva</td></tr><tr><td>Todo o trabalho interior</td><td style="background:#fff5e0;">✅ Sempre</td><td style="background:#fff5e0;">✅ Sempre</td><td style="background:#fff5e0;">✅ Sempre</td><td style="background:#fff5e0;">✅ Sempre</td><td style="background:#fff5e0;">✅ Sempre</td></tr></tbody>
+</table></div>
+</section>
 
-  <footer>
-    <p><strong>Metodologia v2:</strong> consenso de modelos ECMWF IFS 0.25°, ICON Seamless e GFS Seamless via Open-Meteo. Critério usa MÉDIA das rajadas máximas dos modelos. Janelas: 07h-13h (manhã) e 14h-17h (tarde) — hora Açores (UTC-1).</p>
-    <p><strong>Novidades v2:</strong> índice de aguaceiros (horas com chuva ≥ 0.3 mm/h) · etiqueta de regime (Estável / Aguaceiros / Chuva-frente) · indicador de confiança entre modelos (marca «?» quando divergem) · validação 24h (compara briefing emitido com observações reais) · faixa horária 07-17h por zona (barra=rajada, base=chuva).</p>
-    <p><strong>Fontes:</strong> Open-Meteo · IPMA (1110600 Angra) · Yr.no/MET Norway · Windguru.</p>
-    <p><strong>Limiares:</strong> Vento 🟢 ≤50 / 🟡 51-75 / 🔴 >75 km/h · Chuva 🟢 ≤2mm e &lt;2hrs / 🟡 2-8mm ou 2-4hrs / 🔴 >8mm ou ≥5hrs+≥4mm · Humidade 🟢 ≤82% / 🟡 83-90% / 🔴 >90%.</p>
-    <p style="margin-top:8px;">Briefing v2 gerado autonomamente · 2026-05-10 18:25 Açores · Electro Moisés · Ilha Terceira.</p>
-  </footer>
+<section>
+  <h2>Conselhos Estratégicos</h2>
+  <ul class='advice'><li>🎯 <b>Baixa confiança entre modelos</b> em: Sul, Norte, Este, Sudeste, Oeste. Verificar Windguru ao acordar e antes de início de turno.</li><li>🌧 Chuva relevante em: Sul, Norte, Este, Sudeste, Oeste. Garantir vedação de aberturas e proteger caixas elétricas.</li></ul>
+</section>
+
+<section>
+  <h2>Windguru · Atalhos</h2>
+  
+<div class="wgcards">
+  <a class="wgcard" href="https://www.windguru.cz/532" target="_blank" rel="noopener">
+    <div class="wgname">Angra do Heroísmo</div><div class="wgsub">Windguru #532</div></a>
+  <a class="wgcard" href="https://www.windguru.cz/48462" target="_blank" rel="noopener">
+    <div class="wgname">Praia da Vitória</div><div class="wgsub">Windguru #48462</div></a>
+  <a class="wgcard" href="https://www.windguru.cz/48464" target="_blank" rel="noopener">
+    <div class="wgname">Biscoitos</div><div class="wgsub">Windguru #48464</div></a>
 </div>
+
+</section>
+
+<footer>
+  Fontes: Open-Meteo (ECMWF IFS 0.25° + ICON-Seamless + GFS-Seamless) · Open-Meteo Analysis (validação 24h) · IPMA · Yr.no/MET Norway<br>
+  IPMA Terceira (2026-05-11): 13.6-19.3°C · vento SW · tipo 7<br>
+  Metodologia v2: consenso de 3 modelos · janela 07–17h · regras vento+chuva+humidade · regime + confiança + validação 24h<br>
+  Briefing gerado autonomamente · 2026-05-11 05:49
+</footer>
+</main>
 </body>
 </html>
