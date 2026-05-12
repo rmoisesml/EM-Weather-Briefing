@@ -1,0 +1,75 @@
+{
+  "date": "2026-05-12",
+  "zones": {
+    "Sul": {
+      "gust_avg": 18.7,
+      "gust_worst": 35.6,
+      "wind_avg": 13.7,
+      "prec_full": 1.17,
+      "prec_morn": 0.63,
+      "prec_aft": 0.53,
+      "prec_hours": 2,
+      "prec_max_hourly": 0.23,
+      "hum_avg": 74.1,
+      "regime": "EST\u00c1VEL",
+      "confidence": "LOW",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Norte": {
+      "gust_avg": 17.2,
+      "gust_worst": 31.0,
+      "wind_avg": 14.4,
+      "prec_full": 1.23,
+      "prec_morn": 0.67,
+      "prec_aft": 0.57,
+      "prec_hours": 2,
+      "prec_max_hourly": 0.27,
+      "hum_avg": 73.6,
+      "regime": "EST\u00c1VEL",
+      "confidence": "LOW",
+      "veredicto": "\ud83d\udfe1"
+    },
+    "Este": {
+      "gust_avg": 18.7,
+      "gust_worst": 35.6,
+      "wind_avg": 15.4,
+      "prec_full": 1.03,
+      "prec_morn": 0.5,
+      "prec_aft": 0.53,
+      "prec_hours": 1.7,
+      "prec_max_hourly": 0.2,
+      "hum_avg": 73.2,
+      "regime": "EST\u00c1VEL",
+      "confidence": "LOW",
+      "veredicto": "\ud83d\udfe2"
+    },
+    "Sudeste": {
+      "gust_avg": 18.7,
+      "gust_worst": 35.6,
+      "wind_avg": 15.4,
+      "prec_full": 1.03,
+      "prec_morn": 0.5,
+      "prec_aft": 0.53,
+      "prec_hours": 1.7,
+      "prec_max_hourly": 0.2,
+      "hum_avg": 73.2,
+      "regime": "EST\u00c1VEL",
+      "confidence": "LOW",
+      "veredicto": "\ud83d\udfe2"
+    },
+    "Oeste": {
+      "gust_avg": 17.2,
+      "gust_worst": 31.0,
+      "wind_avg": 12.8,
+      "prec_full": 1.33,
+      "prec_morn": 0.73,
+      "prec_aft": 0.6,
+      "prec_hours": 2.7,
+      "prec_max_hourly": 0.27,
+      "hum_avg": 74.4,
+      "regime": "EST\u00c1VEL",
+      "confidence": "LOW",
+      "veredicto": "\ud83d\udfe1"
+    }
+  }
+}
