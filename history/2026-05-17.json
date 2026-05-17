@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-17",
+  "zones": {
+    "Sul": {
+      "gust_avg": 22.7,
+      "gust_worst": 45.0,
+      "wind_mean": 12.2,
+      "prec_full": 0.0,
+      "prec_hours": 0.0,
+      "prec_max_hourly": 0.0,
+      "humidity": 82.7,
+      "regime": "EST\u00c1VEL",
+      "verdict": "Y",
+      "confidence": "LOW"
+    },
+    "Norte": {
+      "gust_avg": 20.6,
+      "gust_worst": 38.9,
+      "wind_mean": 12.2,
+      "prec_full": 0.0,
+      "prec_hours": 0.0,
+      "prec_max_hourly": 0.0,
+      "humidity": 83.0,
+      "regime": "EST\u00c1VEL",
+      "verdict": "Y",
+      "confidence": "LOW"
+    },
+    "Este": {
+      "gust_avg": 22.7,
+      "gust_worst": 45.0,
+      "wind_mean": 12.1,
+      "prec_full": 0.0,
+      "prec_hours": 0.0,
+      "prec_max_hourly": 0.0,
+      "humidity": 82.5,
+      "regime": "EST\u00c1VEL",
+      "verdict": "Y",
+      "confidence": "LOW"
+    },
+    "Sudeste": {
+      "gust_avg": 22.7,
+      "gust_worst": 45.0,
+      "wind_mean": 12.1,
+      "prec_full": 0.0,
+      "prec_hours": 0.0,
+      "prec_max_hourly": 0.0,
+      "humidity": 82.5,
+      "regime": "EST\u00c1VEL",
+      "verdict": "Y",
+      "confidence": "LOW"
+    },
+    "Oeste": {
+      "gust_avg": 20.6,
+      "gust_worst": 38.9,
+      "wind_mean": 12.5,
+      "prec_full": 0.1,
+      "prec_hours": 0.0,
+      "prec_max_hourly": 0.03,
+      "humidity": 84.8,
+      "regime": "EST\u00c1VEL",
+      "verdict": "Y",
+      "confidence": "LOW"
+    }
+  }
+}
